@@ -1,7 +1,33 @@
 import { Driver, VehicleFeature } from '../drivers/types/driver';
+import { AvailableResolutions, Video } from '../videos/types/video';
 
-export const db = {
-  drivers: <Driver[]>[
+export const db: { drivers: Driver[]; videos: Video[] } = {
+  videos: [
+    {
+      id: 1,
+      title: 'Первое видео',
+      author: 'Вася',
+      canBeDownloaded: true,
+      minAgeRestriction: null,
+      createdAt: new Date(),
+      publicationDate: new Date(),
+      availableResolutions: [AvailableResolutions.P_144],
+    },
+    {
+      id: 2,
+      title: 'Второе видео',
+      author: 'Петя',
+      canBeDownloaded: true,
+      minAgeRestriction: null,
+      createdAt: new Date(),
+      publicationDate: new Date(),
+      availableResolutions: [
+        AvailableResolutions.P_360,
+        AvailableResolutions.P_480,
+      ],
+    },
+  ],
+  drivers: [
     {
       id: 1,
       name: 'Tom Rider',
