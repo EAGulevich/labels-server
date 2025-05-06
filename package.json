@@ -11,11 +11,15 @@
     "dev": "nodemon --inspect dist/index.js",
     "jest": "jest -i",
     "lint": "eslint --fix .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build": "tsc",
+    "start": "nodemon dist/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
