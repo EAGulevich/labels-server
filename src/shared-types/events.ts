@@ -1,19 +1,36 @@
 import { Player, Room } from './types';
 
 // SocketServerEventData
-type SSED<T> = {
-  room: Room;
-  eventData: T;
-};
+type SSEData<T = undefined> = T extends undefined
+  ? { room: Room }
+  : {
+      room: Room;
+      eventData: T;
+    };
+
+// SocketServerEventError
+type SSEError = { message: string };
 
 export interface ServerToClientEvents {
-  createdRoom: (data: SSED<{ createdRoom: Room }>) => void;
-  joinedPlayer: (data: SSED<{ joinedPlayer: Player }>) => void;
-  disconnectedPlayer: (data: SSED<{ disconnectedPlayer: Player }>) => void;
-  roomClosed: (data: SSED<{ closedRoomCode: Room['code'] }>) => void;
+  createdRoom: (
+    data: SSEData<{ createdRoom: Room; wasReconnect: boolean }>,
+  ) => void;
+  creatingRoomError: (err: SSEError) => void;
+
+  joinedPlayer: (data: SSEData<{ joinedPlayer: Player }>) => void;
+  joiningPlayerError: (err: SSEError) => void;
+
+  disconnectedPlayer: (data: SSEData<{ disconnectedPlayer: Player }>) => void;
+
+  // TODO: добавить различие неактивен, удален
+  creatorWasDisconnect: (data: SSEData) => void;
+  creatorWasConnected: (data: SSEData) => void;
 }
 
 export interface ClientToServerEvents {
-  createRoom: () => void;
-  joinRoom: (data: { roomCode: Room['code']; player: Player }) => void;
+  createRoom: (creatorId?: Room['creatorId'] | null) => void;
+  joinRoom: (data: {
+    roomCode: Room['code'];
+    player: Omit<Player, 'id'>;
+  }) => void;
 }

@@ -1,12 +1,15 @@
+import { AvatarToken } from './avatarTokens';
+
 export type Player = {
   id: string;
   name: string;
-  avatarToken: string;
+  avatarToken: AvatarToken;
 };
 
 export type Room = {
   code: string;
   status: 'CREATED';
-  creatorSocketId: string;
+  creatorId: string;
   players: Player[];
+  isInactive: boolean;
 };

@@ -1,5 +1,7 @@
 import winston from 'winston';
 import { DB_ROOMS } from '../db/rooms';
+import { DB_CREATORS } from '../db/creators';
+import { DB_PLAYERS } from '../db/players';
 
 const log = winston.createLogger({
   level: 'info',
@@ -17,19 +19,40 @@ export const logger = (
   message: string,
   {
     meta,
-    showRooms,
-    showPlayersForRoom,
-  }: { meta?: any; showRooms?: boolean; showPlayersForRoom?: string } = {},
+    showDBRooms,
+    showDBCreators,
+    showPlayersInRoom,
+    showDBPlayers,
+  }: {
+    meta?: any;
+    showDBRooms?: boolean;
+    showDBCreators?: boolean;
+    showDBPlayers?: boolean;
+    showPlayersInRoom?: string;
+  } = {},
 ) => {
-  log.info(message, meta, showRooms);
+  log.info(message, meta, showDBRooms);
 
-  console.log(message);
+  console.log('----------------------------------------------');
+  console.info(message);
 
-  if (showRooms) {
+  if (showDBRooms) {
+    console.log('Rooms:');
     console.table(DB_ROOMS);
   }
 
-  if (showPlayersForRoom) {
-    console.table(DB_ROOMS[showPlayersForRoom]);
+  if (showDBCreators) {
+    console.log('Creators:');
+    console.table(DB_CREATORS);
+  }
+
+  if (showDBPlayers) {
+    console.log('Players:');
+    console.table(DB_PLAYERS);
+  }
+
+  if (showPlayersInRoom) {
+    console.log(`Players in room ${showPlayersInRoom}:`);
+    console.table(DB_ROOMS[showPlayersInRoom].players);
   }
 };
