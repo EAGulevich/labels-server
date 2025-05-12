@@ -2,6 +2,7 @@ import { AvatarToken } from './avatarTokens';
 
 export type Player = {
   id: string;
+  isVip: boolean;
   name: string;
   avatarToken: AvatarToken;
 };

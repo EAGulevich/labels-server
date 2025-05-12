@@ -6,6 +6,7 @@ import {
 import { DB_ROOMS } from '../../db/rooms';
 import { logger } from '../../utils/logger';
 import { DB_PLAYERS } from '../../db/players';
+import { Player } from '../../shared-types/types';
 
 export const addListenerJoinRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -24,6 +25,10 @@ export const addListenerJoinRoom = (
       DB_ROOMS[oldRoomCode].players = DB_ROOMS[oldRoomCode].players.filter(
         (p) => p.id !== socket.id,
       );
+
+      if (playerInOldRoom.isVip && DB_ROOMS[oldRoomCode].players.length) {
+        DB_ROOMS[oldRoomCode].players[0].isVip = true;
+      }
 
       delete DB_PLAYERS[socket.id];
       io.sockets.in(oldRoomCode).emit('disconnectedPlayer', {
@@ -57,11 +62,6 @@ export const addListenerJoinRoom = (
         showDBPlayers: true,
       });
     } else {
-      const newPlayer = {
-        ...joinedPlayer,
-        id: socket.id,
-      };
-
       // если комнаты не существует
       if (!DB_ROOMS[roomCode]) {
         socket.emit('joiningPlayerError', {
@@ -74,6 +74,12 @@ export const addListenerJoinRoom = (
           },
         );
       } else {
+        const newPlayer: Player = {
+          ...joinedPlayer,
+          id: socket.id,
+          isVip: !DB_ROOMS[roomCode].players.length,
+        };
+
         DB_ROOMS[roomCode].players.push(newPlayer);
         DB_PLAYERS[newPlayer.id] = roomCode;
 

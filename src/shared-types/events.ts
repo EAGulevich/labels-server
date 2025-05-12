@@ -31,6 +31,6 @@ export interface ClientToServerEvents {
   createRoom: (creatorId?: Room['creatorId'] | null) => void;
   joinRoom: (data: {
     roomCode: Room['code'];
-    player: Omit<Player, 'id'>;
+    player: Omit<Player, 'id' | 'isVip'>;
   }) => void;
 }

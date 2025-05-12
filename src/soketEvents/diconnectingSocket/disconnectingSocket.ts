@@ -44,6 +44,10 @@ export const addListenerDisconnectingSocket = (
         )[0];
         delete DB_PLAYERS[socket.id];
 
+        if (disconnectedPlayer.isVip && roomByPlayer.players.length) {
+          roomByPlayer.players[0].isVip = true;
+        }
+
         io.sockets.in(roomCodeByPlayer).emit('disconnectedPlayer', {
           room: roomByPlayer,
           eventData: { disconnectedPlayer },
