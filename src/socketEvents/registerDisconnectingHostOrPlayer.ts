@@ -10,6 +10,7 @@ import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
 import { changeRoomActive } from "@dbActions/changeRoomActive";
 import { removePlayerFromRoom } from "@dbActions/removePlayerFromRoom";
 import { disconnectPlayerFromRoom } from "@dbActions/disconnectPlayerFromRoom";
+import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 
 export const registerDisconnectingHostOrPlayer = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -30,7 +31,7 @@ export const registerDisconnectingHostOrPlayer = (
         changeRoomActive({ roomCode: hostRoomCode, isInactive: true });
 
         socket.broadcast.in(room.code).emit("hostLeftRoom", {
-          room,
+          room: cloneDeepRoom(room),
         });
         logger(`---> Room was inactive ${hostRoomCode}`, {
           showDBRoomHosts: true,
@@ -58,7 +59,7 @@ export const registerDisconnectingHostOrPlayer = (
 
           if (removedPlayer) {
             socket.broadcast.in(room.code).emit("disconnectedPlayer", {
-              room: room,
+              room: cloneDeepRoom(room),
               eventData: { disconnectedPlayer: removedPlayer },
             });
           } else {
@@ -72,7 +73,7 @@ export const registerDisconnectingHostOrPlayer = (
 
           if (disconnectedPlayer) {
             socket.broadcast.in(room.code).emit("disconnectedPlayer", {
-              room: room,
+              room: cloneDeepRoom(room),
               eventData: { disconnectedPlayer },
             });
           } else {

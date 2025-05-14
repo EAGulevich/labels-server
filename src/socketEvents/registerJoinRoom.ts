@@ -8,6 +8,7 @@ import { logger } from "@utils/logger";
 import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
 import { MAX_PLAYERS } from "../constants";
+import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 
 export const registerJoinRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -77,11 +78,11 @@ export const registerJoinRoom = (
         socket.join(roomCode);
 
         socket.broadcast.in(roomCode).emit("joinedPlayer", {
-          room,
+          room: cloneDeepRoom(room),
           eventData: { joinedPlayer: newPlayer },
         });
 
-        cb({ data: { room } });
+        cb({ data: { room: cloneDeepRoom(room) } });
 
         logger(`---> Player joined to room with roomCode=${roomCode}`, {
           showDBRooms: true,

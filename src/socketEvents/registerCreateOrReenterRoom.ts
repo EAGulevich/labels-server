@@ -8,6 +8,7 @@ import { createRoom } from "@dbActions/createRoom";
 import { returnHostToRoom } from "@dbActions/returnHostToRoom";
 import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 import { findRoomByHostId } from "@dbActions/findRoomByHostId";
+import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 
 export const registerCreateOrReenterRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -19,7 +20,7 @@ export const registerCreateOrReenterRoom = (
     socket.join(createdRoom.code);
 
     cb({
-      room: createdRoom,
+      room: cloneDeepRoom(createdRoom),
       eventData: {
         newRoomHostId: createdRoom.hostId,
       },
@@ -51,12 +52,12 @@ export const registerCreateOrReenterRoom = (
       socket.join(foundedRoom.code);
 
       socket.broadcast.in(foundedRoom.code).emit("hostReturnedToRoom", {
-        room: foundedRoom,
+        room: cloneDeepRoom(foundedRoom),
       });
 
       cb({
         data: {
-          room: foundedRoom,
+          room: cloneDeepRoom(foundedRoom),
           eventData: {
             newRoomHostId: foundedRoom.hostId,
           },

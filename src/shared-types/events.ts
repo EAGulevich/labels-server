@@ -1,11 +1,11 @@
-import { ReadonlyRoom, ReadonlyPlayer, Room, Player } from "./types";
+import { Room, Player } from "./types";
 import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 
 // SocketServerEventData
 type SSEData<T = undefined> = T extends undefined
-  ? { room: ReadonlyRoom }
+  ? { room: Room }
   : {
-      room: ReadonlyRoom;
+      room: Room;
       eventData: T;
     };
 
@@ -24,16 +24,14 @@ export interface ServerToClientEvents {
   // Connect/Disconnect events
   hostLeftRoom: (data: SSEData) => void;
   hostReturnedToRoom: (data: SSEData) => void;
-  joinedPlayer: (data: SSEData<{ joinedPlayer: ReadonlyPlayer }>) => void;
-  disconnectedPlayer: (
-    data: SSEData<{ disconnectedPlayer: ReadonlyPlayer }>,
-  ) => void;
+  joinedPlayer: (data: SSEData<{ joinedPlayer: Player }>) => void;
+  disconnectedPlayer: (data: SSEData<{ disconnectedPlayer: Player }>) => void;
 }
 
 export interface ClientToServerEvents {
   findRoomByHostId: (
     data: { roomHostId: string },
-    cb: (res: { foundedRoom: ReadonlyRoom | undefined }) => void,
+    cb: (res: { foundedRoom: Room | undefined }) => void,
   ) => void;
 
   createRoom: (
