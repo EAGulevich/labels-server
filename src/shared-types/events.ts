@@ -12,8 +12,10 @@ type SSEData<T = undefined> = T extends undefined
 type SSEDataWithError<T = undefined> =
   | {
       data: SSEData<T>;
+      error?: null;
     }
   | {
+      data?: null;
       error: {
         code: ERROR_CODE;
         message: string;
