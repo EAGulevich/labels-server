@@ -1,3 +1,5 @@
-import { Room } from '../shared-types/types';
+import { Room } from "@sharedTypes/types";
 
-export const DB_ROOMS: { [creatorSocketId: Room['code']]: Room } = {};
+/**  Все комнаты roomCode: Room */
+export const DB_ROOMS: { [roomCode: Room["code"]]: Room | undefined } = {};
+

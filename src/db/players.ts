@@ -1,3 +1,2 @@
-export const DB_PLAYERS: { [key: string]: string } = {
-  //     playerId: roomCode,
-};
+/**  Связь playerId: roomCode */
+export const DB_PLAYERS: { [playerId: string]: string | undefined } = {};

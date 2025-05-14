@@ -1,0 +1,71 @@
+import { Socket } from "socket.io";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "@sharedTypes/events";
+import { logger } from "@utils/logger";
+import { createRoom } from "@dbActions/createRoom";
+import { returnHostToRoom } from "@dbActions/returnHostToRoom";
+import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
+import { findRoomByHostId } from "@dbActions/findRoomByHostId";
+
+export const registerCreateOrReenterRoom = (
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+) => {
+  socket.on("createRoom", (data, cb) => {
+    logger(`<--- createRoom`, { meta: { socketId: socket.id } });
+
+    const { createdRoom } = createRoom({ roomHostId: socket.id });
+    socket.join(createdRoom.code);
+
+    cb({
+      room: createdRoom,
+      eventData: {
+        newRoomHostId: createdRoom.hostId,
+      },
+    });
+
+    logger(`---> Room created with roomCode=${createdRoom.code}`, {
+      showDBRooms: true,
+    });
+  });
+
+  socket.on("reenterRoom", ({ roomHostId }, cb) => {
+    logger(`<--- returnRoom`, { meta: { roomHostId, socketId: socket.id } });
+
+    const foundedRoom = findRoomByHostId({ roomHostId });
+
+    if (!foundedRoom) {
+      const message = `---> Not found room with room host id ${roomHostId}`;
+      cb({
+        error: {
+          code: ERROR_CODE.ROOM_NOT_FOUND_BY_HOST_ID_REENTER_ERROR,
+          message,
+        },
+      });
+      logger(message, {
+        showDBRooms: true,
+      });
+    } else {
+      returnHostToRoom({ roomCode: foundedRoom.code, newHostId: socket.id });
+      socket.join(foundedRoom.code);
+
+      socket.broadcast.in(foundedRoom.code).emit("hostReturnedToRoom", {
+        room: foundedRoom,
+      });
+
+      cb({
+        data: {
+          room: foundedRoom,
+          eventData: {
+            newRoomHostId: foundedRoom.hostId,
+          },
+        },
+      });
+
+      logger(`---> Host returned to room ${foundedRoom.code}`, {
+        showDBRooms: true,
+      });
+    }
+  });
+};

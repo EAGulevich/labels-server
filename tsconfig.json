@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@sharedTypes/*": ["./src/shared-types/*"],
+      "@dbActions/*": ["./src/dbActions/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@socketEvents/*": ["./src/socketEvents/*"]
+    },
     "target": "es2016",
     "module": "commonjs",
     "rootDir": "./src",
