@@ -1,10 +1,10 @@
-import express from "express";
-import http from "http";
-import { Server } from "socket.io";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 
 export const app = express();
 

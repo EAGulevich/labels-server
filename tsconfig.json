@@ -5,7 +5,9 @@
       "@sharedTypes/*": ["./src/shared-types/*"],
       "@dbActions/*": ["./src/dbActions/*"],
       "@utils/*": ["./src/utils/*"],
-      "@socketEvents/*": ["./src/socketEvents/*"]
+      "@socketEvents/*": ["./src/socketEvents/*"],
+      "@app": ["./src/App.ts"],
+      "@constants": ["./src/constants.ts"]
     },
     "target": "es2016",
     "module": "commonjs",

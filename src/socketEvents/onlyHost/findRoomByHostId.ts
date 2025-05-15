@@ -1,10 +1,10 @@
-import { Socket } from "socket.io";
+import { findRoomByHostId } from "@dbActions/findRoomByHostId";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
-import { findRoomByHostId } from "@dbActions/findRoomByHostId";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { Socket } from "socket.io";
 
 export const registerFindRoomByHostId = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,

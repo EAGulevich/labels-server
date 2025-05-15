@@ -1,11 +1,11 @@
-import { Socket } from "socket.io";
+import { createRoom } from "@dbActions/createRoom";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
-import { logger } from "@utils/logger";
-import { createRoom } from "@dbActions/createRoom";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { logger } from "@utils/logger";
+import { Socket } from "socket.io";
 
 export const registerCreateRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,

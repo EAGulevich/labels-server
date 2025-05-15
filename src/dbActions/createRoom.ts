@@ -1,7 +1,8 @@
 import { ReadonlyRoom, Room } from "@sharedTypes/types";
 import { generateRoomCode } from "@utils/generateRoomCode";
-import { DB_ROOMS } from "../db/rooms";
+
 import { DB_ROOM_HOSTS } from "../db/roomHosts";
+import { DB_ROOMS } from "../db/rooms";
 
 export const createRoom = ({
   roomHostId,

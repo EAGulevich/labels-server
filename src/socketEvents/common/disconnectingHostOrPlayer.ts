@@ -1,17 +1,17 @@
-import { Socket } from "socket.io";
+import { io } from "@app";
+import { changeRoomActive } from "@dbActions/changeRoomActive";
+import { disconnectPlayerFromRoom } from "@dbActions/disconnectPlayerFromRoom";
+import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
+import { getRoomCodeByHostId } from "@dbActions/getRoomCodeByHostId";
+import { getRoomCodeByPlayerId } from "@dbActions/getRoomCodeByPlayerId";
+import { removePlayerFromRoom } from "@dbActions/removePlayerFromRoom";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
-import { logger } from "@utils/logger";
-import { getRoomCodeByHostId } from "@dbActions/getRoomCodeByHostId";
-import { getRoomCodeByPlayerId } from "@dbActions/getRoomCodeByPlayerId";
-import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
-import { changeRoomActive } from "@dbActions/changeRoomActive";
-import { removePlayerFromRoom } from "@dbActions/removePlayerFromRoom";
-import { disconnectPlayerFromRoom } from "@dbActions/disconnectPlayerFromRoom";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
-import { io } from "@app";
+import { logger } from "@utils/logger";
+import { Socket } from "socket.io";
 
 export const registerDisconnectingHostOrPlayer = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,

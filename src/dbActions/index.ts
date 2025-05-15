@@ -4,7 +4,7 @@ export * from "./createRoom";
 export * from "./disconnectPlayerFromRoom";
 export * from "./findRoomByHostId";
 export * from "./getRoomByRoomCode";
-export * from "./getRoomCodeByPlayerId";
 export * from "./getRoomCodeByHostId";
+export * from "./getRoomCodeByPlayerId";
 export * from "./removePlayerFromRoom";
 export * from "./returnHostToRoom";

@@ -1,6 +1,7 @@
 import { ReadonlyPlayer } from "@sharedTypes/types";
-import { DB_ROOMS } from "../db/rooms";
+
 import { DB_PLAYERS } from "../db/players";
+import { DB_ROOMS } from "../db/rooms";
 
 export const removePlayerFromRoom = ({
   roomCode,

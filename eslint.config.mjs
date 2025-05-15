@@ -2,6 +2,7 @@ import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import typescriptPlugin from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 export default [
   {
@@ -17,6 +18,7 @@ export default [
     plugins: {
       "@typescript-eslint": typescriptPlugin,
       prettier: prettierPlugin,
+      "simple-import-sort": simpleImportSort,
     },
     rules: {
       "prettier/prettier": [
@@ -32,6 +34,8 @@ export default [
       ],
       "@typescript-eslint/no-unused-vars": "warn",
       eqeqeq: ["error", "always"],
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
     },
   },
   prettierConfig,

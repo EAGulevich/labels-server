@@ -1,7 +1,8 @@
 import winston from "winston";
-import { DB_ROOMS } from "../db/rooms";
-import { DB_ROOM_HOSTS } from "../db/roomHosts";
+
 import { DB_PLAYERS } from "../db/players";
+import { DB_ROOM_HOSTS } from "../db/roomHosts";
+import { DB_ROOMS } from "../db/rooms";
 
 const log = winston.createLogger({
   level: "info",

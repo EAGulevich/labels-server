@@ -1,5 +1,5 @@
-import { Room, Player } from "./types";
-import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
+import { ERROR_CODE } from "./errorNameCodes";
+import { Player, Room } from "./types";
 
 // SocketServerEventData
 type SSEData<T = undefined> = T extends undefined

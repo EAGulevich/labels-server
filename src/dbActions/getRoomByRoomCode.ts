@@ -1,5 +1,6 @@
-import { DB_ROOMS } from "../db/rooms";
 import { ReadonlyRoom } from "@sharedTypes/types";
+
+import { DB_ROOMS } from "../db/rooms";
 
 export const getRoomByRoomCode = (
   roomCode: string,

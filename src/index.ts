@@ -1,14 +1,15 @@
 import "module-alias/register";
-import cors from "cors";
-import { logger } from "@utils/logger";
-import { app, io, server } from "./App";
+
+import { app, io, server } from "@app";
+import { registerDisconnectingHostOrPlayer } from "@socketEvents/common";
 import {
   registerCreateRoom,
-  registerReenterRoom,
   registerFindRoomByHostId,
+  registerReenterRoom,
 } from "@socketEvents/onlyHost";
 import { registerJoinRoom } from "@socketEvents/onlyPlayer";
-import { registerDisconnectingHostOrPlayer } from "@socketEvents/common";
+import { logger } from "@utils/logger";
+import cors from "cors";
 
 const PORT = process.env.PORT || 5001;
 
