@@ -1,4 +1,4 @@
-import { findRoomByHostId } from "@dbActions/findRoomByHostId";
+import { findRoom } from "@dbActions/findRoom";
 import { returnHostToRoom } from "@dbActions/returnHostToRoom";
 import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 import {
@@ -15,7 +15,7 @@ export const registerReenterRoom = (
   socket.on("reenterRoom", ({ roomHostId }, cb) => {
     logger(`<--- returnRoom`, { meta: { roomHostId, socketId: socket.id } });
 
-    const foundedRoom = findRoomByHostId({ roomHostId });
+    const foundedRoom = findRoom({ findBy: "hostId", value: roomHostId });
 
     if (!foundedRoom) {
       const message = `---> Not found room with room host id ${roomHostId}`;

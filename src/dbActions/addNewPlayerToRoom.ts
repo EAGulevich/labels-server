@@ -1,4 +1,4 @@
-import { Player, ReadonlyPlayer } from "@sharedTypes/types";
+import { DeepReadonly, Player } from "@sharedTypes/types";
 
 import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
@@ -11,7 +11,7 @@ export const addNewPlayerToRoom = ({
   roomCode: string;
   playerId: string;
   joiningPlayer: Pick<Player, "name" | "avatarToken">;
-}): { newPlayer: ReadonlyPlayer | undefined } => {
+}): { newPlayer: DeepReadonly<Player> | undefined } => {
   const room = DB_ROOMS[roomCode];
 
   if (!room) {

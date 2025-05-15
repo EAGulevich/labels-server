@@ -1,4 +1,4 @@
-import { findRoomByHostId } from "@dbActions/findRoomByHostId";
+import { findRoom } from "@dbActions/findRoom";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -10,7 +10,8 @@ export const registerFindRoomByHostId = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
 ) => {
   socket.on("findRoomByHostId", ({ roomHostId }, cb) => {
-    const room = findRoomByHostId({ roomHostId });
+    const room = findRoom({ findBy: "hostId", value: roomHostId });
+
     cb({ foundedRoom: room ? cloneDeepRoom(room) : undefined });
   });
 };

@@ -18,10 +18,4 @@ export type Room = {
   isInactive: boolean;
 };
 
-export type ReadonlyPlayer = Readonly<
-  Pick<Player, "id" | "name" | "isVip" | "avatarToken" | "isPlayerInactive">
->;
-
-export type ReadonlyRoom = Readonly<
-  Pick<Room, "isInactive" | "hostId" | "status" | "code">
-> & { players: Readonly<ReadonlyPlayer[]> };
+export type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };

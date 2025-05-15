@@ -1,7 +1,7 @@
 import winston from "winston";
 
+import { DB_HOSTS } from "../db/hosts";
 import { DB_PLAYERS } from "../db/players";
-import { DB_ROOM_HOSTS } from "../db/roomHosts";
 import { DB_ROOMS } from "../db/rooms";
 
 const log = winston.createLogger({
@@ -52,7 +52,7 @@ export const logger = (
 
   if (showDBRoomHosts) {
     console.log("DB_HOSTS:");
-    console.table(DB_ROOM_HOSTS);
+    console.table(DB_HOSTS);
   }
 
   if (showDBPlayers) {

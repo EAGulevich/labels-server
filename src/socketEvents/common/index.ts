@@ -1,1 +1,1 @@
-export * from "./disconnectingHostOrPlayer";
+export * from "./disconnectingHostOrPlayer/disconnectingHostOrPlayer";

@@ -1,4 +1,4 @@
-import { ReadonlyPlayer } from "@sharedTypes/types";
+import { DeepReadonly, Player } from "@sharedTypes/types";
 
 import { DB_ROOMS } from "../db/rooms";
 
@@ -8,7 +8,7 @@ export const disconnectPlayerFromRoom = ({
 }: {
   playerId: string;
   roomCode: string;
-}): { disconnectedPlayer?: ReadonlyPlayer } => {
+}): { disconnectedPlayer?: DeepReadonly<Player> } => {
   const room = DB_ROOMS[roomCode];
   if (room) {
     const disconnectedPlayer = room.players.find((p) => p.id === playerId);

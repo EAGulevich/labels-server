@@ -1,1 +1,1 @@
-export * from "./joinRoom";
+export * from "./joinRoom/joinRoom";

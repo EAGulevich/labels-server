@@ -1,14 +1,14 @@
-import { ReadonlyRoom, Room } from "@sharedTypes/types";
+import { DeepReadonly, Room } from "@sharedTypes/types";
 import { generateRoomCode } from "@utils/generateRoomCode";
 
-import { DB_ROOM_HOSTS } from "../db/roomHosts";
+import { DB_HOSTS } from "../db/hosts";
 import { DB_ROOMS } from "../db/rooms";
 
 export const createRoom = ({
   roomHostId,
 }: {
   roomHostId: string;
-}): { createdRoom: ReadonlyRoom } => {
+}): { createdRoom: DeepReadonly<Room> } => {
   const createdRoom: Room = {
     code: generateRoomCode(),
     status: "CREATED",
@@ -18,6 +18,6 @@ export const createRoom = ({
   };
 
   DB_ROOMS[createdRoom.code] = createdRoom;
-  DB_ROOM_HOSTS[createdRoom.hostId] = createdRoom.code;
+  DB_HOSTS[createdRoom.hostId] = createdRoom.code;
   return { createdRoom };
 };
