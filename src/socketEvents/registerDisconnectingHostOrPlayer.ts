@@ -57,6 +57,7 @@ export const registerDisconnectingHostOrPlayer = (
             roomCode: playerRoomCode,
           });
 
+
           if (removedPlayer) {
             socket.broadcast.in(room.code).emit("disconnectedPlayer", {
               room: cloneDeepRoom(room),
@@ -87,6 +88,8 @@ export const registerDisconnectingHostOrPlayer = (
           showDBRooms: true,
           showPlayersInRoom: room.code,
         });
+      } else {
+        logger("CRASHED");
       }
     }
   });

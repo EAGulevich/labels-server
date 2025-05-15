@@ -10,18 +10,23 @@ export const removePlayerFromRoom = ({
   roomCode: string;
 }): { removedPlayer?: ReadonlyPlayer } => {
   const room = DB_ROOMS[roomCode];
-  const removedPlayerIndex = room?.players.findIndex((p) => p.id === playerId);
+  const removingPlayerIndex = room?.players.findIndex((p) => p.id === playerId);
 
-  if (!removedPlayerIndex || !room) {
+  if (
+    removingPlayerIndex === undefined ||
+    removingPlayerIndex === -1 ||
+    !room
+  ) {
     return { removedPlayer: undefined };
   }
 
-  const removedPlayer = room.players.splice(removedPlayerIndex, 1)[0];
+  const removedPlayer = room.players.splice(removingPlayerIndex, 1)[0];
   delete DB_PLAYERS[playerId];
 
   if (removedPlayer.isVip && room.players.length) {
     room.players[0].isVip = true;
   }
+
   return {
     removedPlayer,
   };
