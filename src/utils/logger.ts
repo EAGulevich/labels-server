@@ -18,12 +18,14 @@ const log = winston.createLogger({
 export const logger = (
   message: string,
   {
+    isError,
     meta,
     showDBRooms,
     showDBRoomHosts,
     showPlayersInRoom,
     showDBPlayers,
   }: {
+    isError?: boolean;
     meta?: any;
     showDBRooms?: boolean;
     showDBRoomHosts?: boolean;
@@ -31,7 +33,11 @@ export const logger = (
     showPlayersInRoom?: string;
   } = {},
 ) => {
-  log.info(message, meta, showDBRooms);
+  if (isError) {
+    log.error(message, meta);
+  } else {
+    log.info(message, meta, showDBRooms);
+  }
 
   console.info(message);
   if (meta) {
@@ -54,7 +60,9 @@ export const logger = (
   }
 
   if (showPlayersInRoom) {
-    console.log(`Players in room ${showPlayersInRoom}:`);
+    console.log(`PLAYERS IN ROOM ${showPlayersInRoom}:`);
     console.table(DB_ROOMS[showPlayersInRoom]?.players);
   }
+
+  console.log("_________________________");
 };

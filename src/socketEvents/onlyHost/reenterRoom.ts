@@ -4,33 +4,14 @@ import {
   ServerToClientEvents,
 } from "@sharedTypes/events";
 import { logger } from "@utils/logger";
-import { createRoom } from "@dbActions/createRoom";
 import { returnHostToRoom } from "@dbActions/returnHostToRoom";
 import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 import { findRoomByHostId } from "@dbActions/findRoomByHostId";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 
-export const registerCreateOrReenterRoom = (
+export const registerReenterRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
 ) => {
-  socket.on("createRoom", (data, cb) => {
-    logger(`<--- createRoom`, { meta: { socketId: socket.id } });
-
-    const { createdRoom } = createRoom({ roomHostId: socket.id });
-    socket.join(createdRoom.code);
-
-    cb({
-      room: cloneDeepRoom(createdRoom),
-      eventData: {
-        newRoomHostId: createdRoom.hostId,
-      },
-    });
-
-    logger(`---> Room created with roomCode=${createdRoom.code}`, {
-      showDBRooms: true,
-    });
-  });
-
   socket.on("reenterRoom", ({ roomHostId }, cb) => {
     logger(`<--- returnRoom`, { meta: { roomHostId, socketId: socket.id } });
 

@@ -11,6 +11,7 @@ import { changeRoomActive } from "@dbActions/changeRoomActive";
 import { removePlayerFromRoom } from "@dbActions/removePlayerFromRoom";
 import { disconnectPlayerFromRoom } from "@dbActions/disconnectPlayerFromRoom";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { io } from "@app";
 
 export const registerDisconnectingHostOrPlayer = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -28,9 +29,10 @@ export const registerDisconnectingHostOrPlayer = (
       const room = getRoomByRoomCode(hostRoomCode);
       if (room) {
         //   TODO: удалять через X секунд неактивные комнаты
+        // TODO: + добавить обработку эвента с сервера, что комната удалена, т.к. хост не переподключился
         changeRoomActive({ roomCode: hostRoomCode, isInactive: true });
 
-        socket.broadcast.in(room.code).emit("hostLeftRoom", {
+        io.sockets.in(room.code).emit("hostLeftRoom", {
           room: cloneDeepRoom(room),
         });
         logger(`---> Room was inactive ${hostRoomCode}`, {
@@ -38,11 +40,9 @@ export const registerDisconnectingHostOrPlayer = (
           showDBRooms: true,
         });
       } else {
-        logger("CRASHED");
+        logger("CRASHED", { isError: true });
       }
-    }
-
-    if (playerRoomCode) {
+    } else if (playerRoomCode) {
       logger(`<--- playerDisconnecting`, {
         meta: { roomCode: playerRoomCode, socketId: socket.id },
       });
@@ -57,14 +57,13 @@ export const registerDisconnectingHostOrPlayer = (
             roomCode: playerRoomCode,
           });
 
-
           if (removedPlayer) {
-            socket.broadcast.in(room.code).emit("disconnectedPlayer", {
+            io.sockets.in(room.code).emit("disconnectedPlayer", {
               room: cloneDeepRoom(room),
               eventData: { disconnectedPlayer: removedPlayer },
             });
           } else {
-            logger("CRASHED");
+            logger("CRASHED", { isError: true });
           }
         } else {
           const { disconnectedPlayer } = disconnectPlayerFromRoom({
@@ -73,12 +72,12 @@ export const registerDisconnectingHostOrPlayer = (
           });
 
           if (disconnectedPlayer) {
-            socket.broadcast.in(room.code).emit("disconnectedPlayer", {
+            io.sockets.in(room.code).emit("disconnectedPlayer", {
               room: cloneDeepRoom(room),
               eventData: { disconnectedPlayer },
             });
           } else {
-            logger("CRASHED");
+            logger("CRASHED", { isError: true });
           }
         }
 
@@ -89,7 +88,7 @@ export const registerDisconnectingHostOrPlayer = (
           showPlayersInRoom: room.code,
         });
       } else {
-        logger("CRASHED");
+        logger("CRASHED", { isError: true });
       }
     }
   });

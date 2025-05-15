@@ -27,6 +27,7 @@ export interface ServerToClientEvents {
   hostLeftRoom: (data: SSEData) => void;
   hostReturnedToRoom: (data: SSEData) => void;
   joinedPlayer: (data: SSEData<{ joinedPlayer: Player }>) => void;
+  // TODO: разграничить вышел и стал неактивным
   disconnectedPlayer: (data: SSEData<{ disconnectedPlayer: Player }>) => void;
 }
 

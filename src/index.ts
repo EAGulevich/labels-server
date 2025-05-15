@@ -3,11 +3,12 @@ import cors from "cors";
 import { logger } from "@utils/logger";
 import { app, io, server } from "./App";
 import {
-  registerCreateOrReenterRoom,
-  registerJoinRoom,
-  registerDisconnectingHostOrPlayer,
+  registerCreateRoom,
+  registerReenterRoom,
   registerFindRoomByHostId,
-} from "@socketEvents/index";
+} from "@socketEvents/onlyHost";
+import { registerJoinRoom } from "@socketEvents/onlyPlayer";
+import { registerDisconnectingHostOrPlayer } from "@socketEvents/common";
 
 const PORT = process.env.PORT || 5001;
 
@@ -20,9 +21,15 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   logger(`USER CONNECTED: ${socket.id}`);
 
+  // host
+  registerCreateRoom(socket);
+  registerReenterRoom(socket);
   registerFindRoomByHostId(socket);
-  registerCreateOrReenterRoom(socket);
+
+  //player
   registerJoinRoom(socket);
+
+  // common
   registerDisconnectingHostOrPlayer(socket);
 });
 

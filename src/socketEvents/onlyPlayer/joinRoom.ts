@@ -1,14 +1,14 @@
-import { Socket } from "socket.io";
+import { MAX_PLAYERS } from "@constants";
+import { addNewPlayerToRoom } from "@dbActions/addNewPlayerToRoom";
+import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
+import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
-import { addNewPlayerToRoom } from "@dbActions/addNewPlayerToRoom";
-import { logger } from "@utils/logger";
-import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
-import { getRoomByRoomCode } from "@dbActions/getRoomByRoomCode";
-import { MAX_PLAYERS } from "../constants";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { logger } from "@utils/logger";
+import { Socket } from "socket.io";
 
 export const registerJoinRoom = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
@@ -90,7 +90,7 @@ export const registerJoinRoom = (
           showDBPlayers: true,
         });
       } else {
-        logger("CRASHED");
+        logger("CRASHED", { isError: true });
       }
     }
   });
