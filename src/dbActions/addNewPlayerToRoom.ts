@@ -18,6 +18,12 @@ export const addNewPlayerToRoom = ({
     return { newPlayer: undefined };
   }
 
+  const checkIfAlreadyInRoom = room.players.some((p) => p.id === playerId);
+
+  if (checkIfAlreadyInRoom) {
+    return { newPlayer: undefined };
+  }
+
   const newPlayer: Player = {
     ...joiningPlayer,
     id: playerId,

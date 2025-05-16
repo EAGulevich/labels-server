@@ -38,20 +38,6 @@ export const registerJoinRoom = (
       if (!room || !newPlayer) {
         logger("CRASHED", { isError: true });
       } else {
-        // TODO: если игрок уже в комнате и пытается войти в нее заново (ВОЗМОЖНО ОН НЕ АКТИВЕН, ЛИБО НА ФРОНТЕ ПОПЫТКА ДВАЖДЫ ВОЙТИ)
-        // if (oldRoomCode === roomCode && playerInOldRoom) {
-        //   socket.emit('joinedPlayer', {
-        //     room: DB_ROOMS[roomCode],
-        //     eventData: { joinedPlayer: playerInOldRoom },
-        //   });
-        //
-        //   logger(`Player ${playerInOldRoom.id} already in room ${roomCode}`, {
-        //     meta: { roomCode, joinedPlayer },
-        //     showDBRooms: true,
-        //     showPlayersInRoom: roomCode,
-        //     showDBPlayers: true,
-        //   });
-        // }
         socket.join(roomCode);
 
         socket.broadcast.in(roomCode).emit("joinedPlayer", {
