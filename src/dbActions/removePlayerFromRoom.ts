@@ -27,6 +27,12 @@ export const removePlayerFromRoom = ({
   const removedPlayer = room.players.splice(removingPlayerIndex, 1)[0];
   delete DB_PLAYERS[playerId];
 
+  if (!removedPlayer.isVip) {
+    return {
+      removedPlayer,
+    };
+  }
+
   const firstActivePlayer = room.players.find((p) => p.isActive);
 
   if (removedPlayer.isVip && firstActivePlayer) {
