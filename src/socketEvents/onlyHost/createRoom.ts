@@ -23,8 +23,6 @@ export const registerCreateRoom = (
       },
     });
 
-    logger(`---> Room created with roomCode=${createdRoom.code}`, {
-      showDBRooms: true,
-    });
+    logger(`---> Room created with roomCode=${createdRoom.code}`);
   });
 };

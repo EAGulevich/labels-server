@@ -28,10 +28,7 @@ export const hostDisconnect = ({ socket }: HostDisconnectProps) => {
     io.sockets.in(room.code).emit("hostLeftRoom", {
       room: cloneDeepRoom(room),
     });
-    logger(`---> Room was inactive ${room.code}`, {
-      showDBRoomHosts: true,
-      showDBRooms: true,
-    });
+    logger(`---> Room was inactive ${room.code}`);
   } else {
     logger("CRASHED", { isError: true });
   }

@@ -28,17 +28,13 @@ export interface ServerToClientEvents {
   hostReturnedToRoom: (data: SSEData) => void;
   joinedPlayer: (data: SSEData<{ joinedPlayer: Player }>) => void;
   disconnectedPlayer: (data: SSEData<{ disconnectedPlayer: Player }>) => void;
-
-  updateVipPlayer: (data: SSEData<{ newVipPlayer: Player }>) => void;
-
-  gameStarted: (data: SSEData) => void;
-
-  // todo later: playerHasReconnected
-  // playerHasReconnected: (data: SSEData<{ reconnectedPlayer: Player }>) => void;
-  // todo later: playerLostConnection
+  playerHasReconnected: (data: SSEData<{ reconnectedPlayer: Player }>) => void;
   playerLostConnection: (
     data: SSEData<{ markedInactivePlayer: Player }>,
   ) => void;
+  updateVipPlayer: (data: SSEData<{ newVipPlayer: Player }>) => void;
+
+  gameStarted: (data: SSEData) => void;
 }
 
 export interface ClientToServerEvents {
@@ -59,6 +55,7 @@ export interface ClientToServerEvents {
 
   joinRoom: (
     data: {
+      prevPlayerId?: string;
       roomCode: Room["code"];
       player: Pick<Player, "name" | "avatarToken">;
     },
@@ -66,13 +63,4 @@ export interface ClientToServerEvents {
   ) => void;
 
   startGame: () => void;
-
-  // todo later: rejoinRoom
-  // rejoinRoom: (
-  //   data: {
-  //     roomCode: Room["code"];
-  //     player: Pick<Player, "name" | "avatarToken">;
-  //   },
-  //   cb: (res: SSEDataWithError) => void,
-  // ) => void;
 }

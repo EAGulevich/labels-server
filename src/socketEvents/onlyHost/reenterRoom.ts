@@ -25,9 +25,7 @@ export const registerReenterRoom = (
           message,
         },
       });
-      logger(message, {
-        showDBRooms: true,
-      });
+      logger(message);
     } else {
       returnHostToRoom({ roomCode: foundedRoom.code, newHostId: socket.id });
       socket.join(foundedRoom.code);
@@ -45,9 +43,7 @@ export const registerReenterRoom = (
         },
       });
 
-      logger(`---> Host returned to room ${foundedRoom.code}`, {
-        showDBRooms: true,
-      });
+      logger(`---> Host returned to room ${foundedRoom.code}`);
     }
   });
 };

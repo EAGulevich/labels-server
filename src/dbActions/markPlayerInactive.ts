@@ -31,10 +31,11 @@ export const markPlayerInactive = ({
       markedInactivePlayer,
     };
   }
+  markedInactivePlayer.isVip = false;
 
   const firstActivePlayer = room.players.find((p) => p.isActive);
 
-  if (markedInactivePlayer.isVip && firstActivePlayer) {
+  if (firstActivePlayer) {
     firstActivePlayer.isVip = true;
   }
   return {

@@ -1,7 +1,6 @@
+import { Room } from "@sharedTypes/types";
 import winston from "winston";
 
-import { DB_HOSTS } from "../db/hosts";
-import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
 
 const log = winston.createLogger({
@@ -10,10 +9,7 @@ const log = winston.createLogger({
     winston.format.timestamp(),
     winston.format.json(),
   ),
-  transports: [
-    // new winston.transports.Console(),
-    new winston.transports.File({ filename: "socket.log" }),
-  ],
+  transports: [new winston.transports.File({ filename: "socket.log" })],
 });
 
 export const logger = (
@@ -21,49 +17,29 @@ export const logger = (
   {
     isError,
     meta,
-    showDBRooms,
-    showDBRoomHosts,
-    showPlayersInRoom,
-    showDBPlayers,
   }: {
     isError?: boolean;
     meta?: any;
-    showDBRooms?: boolean;
-    showDBRoomHosts?: boolean;
-    showDBPlayers?: boolean;
-    showPlayersInRoom?: string;
   } = {},
 ) => {
   if (isError) {
     log.error(message, meta);
   } else {
-    log.info(message, meta, showDBRooms);
-  }
+    log.info(message, meta);
+    console.info(message);
 
-  console.info(message);
-  if (meta) {
-    console.table(meta);
-  }
-
-  if (showDBRooms) {
     console.log("DB_ROOMS:");
-    console.table(DB_ROOMS);
-  }
+    const prettyRooms: unknown[] = [];
+    const rooms = Object.values(DB_ROOMS) as Room[];
+    rooms.forEach(({ players, ...room }) => {
+      prettyRooms.push({ ...room, players: "list:" });
+      players.forEach((p) => {
+        prettyRooms.push({
+          players: `vip[${p.isVip ? "+" : "-"}] active[${p.isActive ? "+" : "-"}] name[${p.name}] id[${p.id}]`,
+        });
+      });
+    });
 
-  if (showDBRoomHosts) {
-    console.log("DB_HOSTS:");
-    console.table(DB_HOSTS);
+    console.table(prettyRooms);
   }
-
-  if (showDBPlayers) {
-    console.log("DB_PLAYERS:");
-    console.table(DB_PLAYERS);
-  }
-
-  if (showPlayersInRoom) {
-    console.log(`PLAYERS IN ROOM ${showPlayersInRoom}:`);
-    console.table(DB_ROOMS[showPlayersInRoom]?.players);
-  }
-
-  console.log("_________________________");
 };

@@ -74,9 +74,6 @@ export const playerDisconnect = ({ socket }: PlayerDisconnectProps) => {
 
     logger(`---> Player was inactive`, {
       meta: { roomCode: room.code, socketId: socket.id },
-      showDBPlayers: true,
-      showDBRooms: true,
-      showPlayersInRoom: room.code,
     });
   } else {
     logger("CRASHED", { isError: true });
