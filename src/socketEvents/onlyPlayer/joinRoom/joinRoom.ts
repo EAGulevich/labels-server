@@ -45,7 +45,14 @@ export const registerJoinRoom = (
           eventData: { joinedPlayer: newPlayer },
         });
 
-        cb({ data: { room: cloneDeepRoom(room) } });
+        cb({
+          data: {
+            room: cloneDeepRoom(room),
+            eventData: {
+              joinedPlayer: newPlayer,
+            },
+          },
+        });
 
         logger(`---> Player joined to room with roomCode=${roomCode}`, {
           showDBRooms: true,

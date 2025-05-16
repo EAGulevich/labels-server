@@ -6,6 +6,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
+import { cloneDeepPlayer } from "@utils/cloneDeepPlayer";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 import { logger } from "@utils/logger";
 import { Socket } from "socket.io";
@@ -24,7 +25,7 @@ export const playerDisconnect = ({ socket }: PlayerDisconnectProps) => {
   if (room) {
     //   в данном случае удаляем, иначе делаем неактивным
     if (room.status === "CREATED") {
-      const { removedPlayer } = removePlayerFromRoom({
+      const { removedPlayer, newVipPlayer } = removePlayerFromRoom({
         playerId: socket.id,
         roomCode: room.code,
       });
@@ -34,11 +35,20 @@ export const playerDisconnect = ({ socket }: PlayerDisconnectProps) => {
           room: cloneDeepRoom(room),
           eventData: { disconnectedPlayer: removedPlayer },
         });
+
+        if (newVipPlayer) {
+          io.sockets.in(room.code).emit("updateVipPlayer", {
+            room: cloneDeepRoom(room),
+            eventData: {
+              newVipPlayer: cloneDeepPlayer(newVipPlayer),
+            },
+          });
+        }
       } else {
         logger("CRASHED", { isError: true });
       }
     } else {
-      const { markedInactivePlayer } = markPlayerInactive({
+      const { markedInactivePlayer, newVipPlayer } = markPlayerInactive({
         roomCode: room.code,
         playerId: socket.id,
       });
@@ -48,6 +58,15 @@ export const playerDisconnect = ({ socket }: PlayerDisconnectProps) => {
           room: cloneDeepRoom(room),
           eventData: { markedInactivePlayer },
         });
+
+        if (newVipPlayer) {
+          io.sockets.in(room.code).emit("updateVipPlayer", {
+            room: cloneDeepRoom(room),
+            eventData: {
+              newVipPlayer: cloneDeepPlayer(newVipPlayer),
+            },
+          });
+        }
       } else {
         logger("CRASHED", { isError: true });
       }

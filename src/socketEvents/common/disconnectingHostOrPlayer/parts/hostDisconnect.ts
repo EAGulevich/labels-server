@@ -21,8 +21,8 @@ export const hostDisconnect = ({ socket }: HostDisconnectProps) => {
   });
 
   if (room) {
-    //   TODO: удалять через X секунд неактивные комнаты
-    // TODO: + добавить обработку эвента с сервера, что комната удалена, т.к. хост не переподключился
+    // todo later: удалить комнату, если хост не вернулся в нее спустя X секунд
+    // + оправить об этом эвент другим подключенным пользователям
     changeRoomActive({ roomCode: room.code, isInactive: true });
 
     io.sockets.in(room.code).emit("hostLeftRoom", {

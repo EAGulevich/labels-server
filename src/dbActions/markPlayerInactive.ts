@@ -8,27 +8,31 @@ export const markPlayerInactive = ({
 }: {
   playerId: string;
   roomCode: string;
-}): { markedInactivePlayer?: DeepReadonly<Player> } => {
-  // TODO: продумать правильно логику вип
+}): {
+  markedInactivePlayer?: DeepReadonly<Player>;
+  newVipPlayer?: DeepReadonly<Player>;
+} => {
   const room = DB_ROOMS[roomCode];
-  if (room) {
-    const markedInactivePlayer = room.players.find((p) => p.id === playerId);
 
-    if (markedInactivePlayer) {
-      // TODO: убрать у него випа ????
-      markedInactivePlayer.isActive = false;
-
-      if (markedInactivePlayer.isVip && room.players.length) {
-        // TODO сделать вип активного первого игрока + если таких нет
-        room.players[0].isVip = true;
-      }
-      return {
-        markedInactivePlayer,
-      };
-    } else {
-      return { markedInactivePlayer: undefined };
-    }
-  } else {
+  if (!room) {
     return { markedInactivePlayer: undefined };
   }
+
+  const markedInactivePlayer = room.players.find((p) => p.id === playerId);
+
+  if (!markedInactivePlayer) {
+    return { markedInactivePlayer: undefined };
+  }
+
+  markedInactivePlayer.isActive = false;
+
+  const firstActivePlayer = room.players.find((p) => p.isActive);
+
+  if (markedInactivePlayer.isVip && firstActivePlayer) {
+    firstActivePlayer.isVip = true;
+  }
+  return {
+    markedInactivePlayer,
+    newVipPlayer: firstActivePlayer,
+  };
 };

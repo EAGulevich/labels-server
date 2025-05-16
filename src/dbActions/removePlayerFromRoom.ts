@@ -9,7 +9,10 @@ export const removePlayerFromRoom = ({
 }: {
   playerId: string;
   roomCode: string;
-}): { removedPlayer?: DeepReadonly<Player> } => {
+}): {
+  removedPlayer?: DeepReadonly<Player>;
+  newVipPlayer?: DeepReadonly<Player>;
+} => {
   const room = DB_ROOMS[roomCode];
   const removingPlayerIndex = room?.players.findIndex((p) => p.id === playerId);
 
@@ -24,12 +27,14 @@ export const removePlayerFromRoom = ({
   const removedPlayer = room.players.splice(removingPlayerIndex, 1)[0];
   delete DB_PLAYERS[playerId];
 
-  if (removedPlayer.isVip && room.players.length) {
-    // TODO вип (первому активному)
-    room.players[0].isVip = true;
+  const firstActivePlayer = room.players.find((p) => p.isActive);
+
+  if (removedPlayer.isVip && firstActivePlayer) {
+    firstActivePlayer.isVip = true;
   }
 
   return {
     removedPlayer,
+    newVipPlayer: firstActivePlayer,
   };
 };
