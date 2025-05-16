@@ -25,6 +25,7 @@ export const removePlayerFromRoom = ({
   delete DB_PLAYERS[playerId];
 
   if (removedPlayer.isVip && room.players.length) {
+    // TODO вип (первому активному)
     room.players[0].isVip = true;
   }
 

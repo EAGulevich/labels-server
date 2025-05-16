@@ -1,3 +1,4 @@
+import { ROOM_STATUSES } from "@sharedTypes/roomStatuses";
 import { DeepReadonly, Room } from "@sharedTypes/types";
 import { generateRoomCode } from "@utils/generateRoomCode";
 
@@ -11,7 +12,7 @@ export const createRoom = ({
 }): { createdRoom: DeepReadonly<Room> } => {
   const createdRoom: Room = {
     code: generateRoomCode(),
-    status: "CREATED",
+    status: ROOM_STATUSES.CREATED,
     players: [],
     hostId: roomHostId,
     isInactive: false,

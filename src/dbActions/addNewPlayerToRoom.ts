@@ -22,6 +22,7 @@ export const addNewPlayerToRoom = ({
     ...joiningPlayer,
     id: playerId,
     isVip: !room.players.length,
+    isActive: true,
   };
 
   room.players.push(newPlayer);

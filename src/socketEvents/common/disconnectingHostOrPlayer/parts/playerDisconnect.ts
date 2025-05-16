@@ -1,6 +1,6 @@
 import { io } from "@app";
-import { disconnectPlayerFromRoom } from "@dbActions/disconnectPlayerFromRoom";
 import { findRoom } from "@dbActions/findRoom";
+import { markPlayerInactive } from "@dbActions/markPlayerInactive";
 import { removePlayerFromRoom } from "@dbActions/removePlayerFromRoom";
 import {
   ClientToServerEvents,
@@ -38,15 +38,15 @@ export const playerDisconnect = ({ socket }: PlayerDisconnectProps) => {
         logger("CRASHED", { isError: true });
       }
     } else {
-      const { disconnectedPlayer } = disconnectPlayerFromRoom({
+      const { markedInactivePlayer } = markPlayerInactive({
         roomCode: room.code,
         playerId: socket.id,
       });
 
-      if (disconnectedPlayer) {
-        io.sockets.in(room.code).emit("disconnectedPlayer", {
+      if (markedInactivePlayer) {
+        io.sockets.in(room.code).emit("playerLostConnection", {
           room: cloneDeepRoom(room),
-          eventData: { disconnectedPlayer },
+          eventData: { markedInactivePlayer },
         });
       } else {
         logger("CRASHED", { isError: true });

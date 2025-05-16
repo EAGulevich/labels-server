@@ -1,0 +1,3 @@
+export enum ROOM_STATUSES {
+  CREATED = "CREATED",
+}
