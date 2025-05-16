@@ -7,7 +7,7 @@ import {
   registerFindRoomByHostId,
   registerReenterRoom,
 } from "@socketEvents/onlyHost";
-import { registerJoinRoom } from "@socketEvents/onlyPlayer";
+import { registerJoinRoom, registerStartGame } from "@socketEvents/onlyPlayer";
 import { logger } from "@utils/logger";
 import cors from "cors";
 
@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
 
   //player
   registerJoinRoom(socket);
+  registerStartGame(socket);
 
   // common
   registerDisconnectingHostOrPlayer(socket);
