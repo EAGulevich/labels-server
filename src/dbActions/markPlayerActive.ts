@@ -1,7 +1,6 @@
-import { DeepReadonly, Player } from "@sharedTypes/types";
-
 import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
+import { DBPlayer, DeepReadonly } from "../db/types";
 
 export const markPlayerActive = ({
   roomCode,
@@ -12,7 +11,7 @@ export const markPlayerActive = ({
   newPlayerId: string;
   roomCode: string;
 }): {
-  markedActivePlayer?: DeepReadonly<Player>;
+  markedActivePlayer?: DeepReadonly<DBPlayer>;
 } => {
   const room = DB_ROOMS[roomCode];
 

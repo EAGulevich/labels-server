@@ -35,6 +35,8 @@ export interface ServerToClientEvents {
   updateVipPlayer: (data: SSEData<{ newVipPlayer: Player }>) => void;
 
   gameStarted: (data: SSEData) => void;
+
+  playerAddedFact: (data: SSEData) => void;
 }
 
 export interface ClientToServerEvents {
@@ -63,4 +65,9 @@ export interface ClientToServerEvents {
   ) => void;
 
   startGame: () => void;
+
+  addFact: (
+    data: { text: string },
+    cb: (res: SSEDataWithError<{ createdFact: string }>) => void,
+  ) => void;
 }

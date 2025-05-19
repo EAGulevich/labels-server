@@ -1,7 +1,7 @@
-import { Room } from "@sharedTypes/types";
 import winston from "winston";
 
 import { DB_ROOMS } from "../db/rooms";
+import { DBRoom } from "../db/types";
 
 const log = winston.createLogger({
   level: "info",
@@ -28,18 +28,26 @@ export const logger = (
     log.info(message, meta);
     console.info(message);
 
-    console.log("DB_ROOMS:");
     const prettyRooms: unknown[] = [];
-    const rooms = Object.values(DB_ROOMS) as Room[];
-    rooms.forEach(({ players, ...room }) => {
-      prettyRooms.push({ ...room, players: "list:" });
+
+    const rooms = Object.values(DB_ROOMS) as DBRoom[];
+
+    rooms.forEach(({ players, facts, ...room }) => {
+      prettyRooms.push({
+        ...room,
+        players: players.length,
+        facts: facts.length,
+      });
       players.forEach((p) => {
+        const fact = facts.find((f) => f.playerId === p.id);
         prettyRooms.push({
           players: `vip[${p.isVip ? "+" : "-"}] active[${p.isActive ? "+" : "-"}] name[${p.name}] id[${p.id}]`,
+          facts: fact ? `isGuessed[${fact.isGuessed}] ${fact.text}` : "",
         });
       });
     });
 
+    console.log("DB_ROOMS:");
     console.table(prettyRooms);
   }
 };

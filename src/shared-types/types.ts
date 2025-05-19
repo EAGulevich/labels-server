@@ -1,3 +1,5 @@
+import { FACT_STATUS } from "@sharedTypes/factStatuses";
+
 import { AvatarToken } from "./avatarTokens";
 import { ROOM_STATUSES } from "./roomStatuses";
 
@@ -7,6 +9,7 @@ export type Player = {
   name: string;
   avatarToken: AvatarToken;
   isActive: boolean;
+  factStatus: FACT_STATUS;
 };
 
 export type Room = {
@@ -16,5 +19,3 @@ export type Room = {
   players: Player[];
   isInactive: boolean;
 };
-
-export type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };

@@ -1,4 +1,4 @@
-import { Room } from "@sharedTypes/types";
+import { DBRoom } from "./types";
 
 /**  Все комнаты roomCode: Room */
-export const DB_ROOMS: { [roomCode: Room["code"]]: Room | undefined } = {};
+export const DB_ROOMS: { [roomCode: DBRoom["code"]]: DBRoom | undefined } = {};

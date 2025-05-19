@@ -1,5 +1,7 @@
-import { DeepReadonly, Player } from "@sharedTypes/types";
+import { Player } from "@sharedTypes/types";
 
-export const cloneDeepPlayer = (player: DeepReadonly<Player>): Player => {
+import { DBPlayer, DeepReadonly } from "../db/types";
+
+export const cloneDeepPlayer = (player: DeepReadonly<DBPlayer>): Player => {
   return { ...player };
 };

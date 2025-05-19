@@ -1,5 +1,7 @@
-import { DeepReadonly, Room } from "@sharedTypes/types";
+import { Room } from "@sharedTypes/types";
 
-export const cloneDeepRoom = (room: DeepReadonly<Room>): Room => {
+import { DBRoom, DeepReadonly } from "../db/types";
+
+export const cloneDeepRoom = (room: DeepReadonly<DBRoom>): Room => {
   return { ...room, players: [...room.players] };
 };

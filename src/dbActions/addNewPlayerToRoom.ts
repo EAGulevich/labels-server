@@ -1,7 +1,9 @@
-import { DeepReadonly, Player } from "@sharedTypes/types";
+import { FACT_STATUS } from "@sharedTypes/factStatuses";
+import { Player } from "@sharedTypes/types";
 
 import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
+import { DBPlayer, DeepReadonly } from "../db/types";
 
 export const addNewPlayerToRoom = ({
   joiningPlayer,
@@ -11,7 +13,7 @@ export const addNewPlayerToRoom = ({
   roomCode: string;
   playerId: string;
   joiningPlayer: Pick<Player, "name" | "avatarToken">;
-}): { newPlayer: DeepReadonly<Player> | undefined } => {
+}): { newPlayer: DeepReadonly<DBPlayer> | undefined } => {
   const room = DB_ROOMS[roomCode];
 
   if (!room) {
@@ -29,6 +31,7 @@ export const addNewPlayerToRoom = ({
     id: playerId,
     isVip: !room.players.filter((p) => p.isActive).length,
     isActive: true,
+    factStatus: FACT_STATUS.NOT_RECEIVED,
   };
 
   room.players.push(newPlayer);

@@ -1,7 +1,6 @@
-import { DeepReadonly, Player } from "@sharedTypes/types";
-
 import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
+import { DBPlayer, DeepReadonly } from "../db/types";
 
 export const removePlayerFromRoom = ({
   roomCode,
@@ -10,8 +9,8 @@ export const removePlayerFromRoom = ({
   playerId: string;
   roomCode: string;
 }): {
-  removedPlayer?: DeepReadonly<Player>;
-  newVipPlayer?: DeepReadonly<Player>;
+  removedPlayer?: DeepReadonly<DBPlayer>;
+  newVipPlayer?: DeepReadonly<DBPlayer>;
 } => {
   const room = DB_ROOMS[roomCode];
   const removingPlayerIndex = room?.players.findIndex((p) => p.id === playerId);
