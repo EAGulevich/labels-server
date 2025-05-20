@@ -36,9 +36,13 @@ export const markPlayerInactive = ({
 
   if (firstActivePlayer) {
     firstActivePlayer.isVip = true;
+    return {
+      markedInactivePlayer,
+      newVipPlayer: firstActivePlayer,
+    };
+  } else {
+    return {
+      markedInactivePlayer,
+    };
   }
-  return {
-    markedInactivePlayer,
-    newVipPlayer: firstActivePlayer,
-  };
 };

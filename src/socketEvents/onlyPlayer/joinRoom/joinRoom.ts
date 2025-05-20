@@ -60,7 +60,7 @@ export const registerJoinRoom = (
       } else {
         const { newPlayer } = addNewPlayerToRoom({
           roomCode,
-          joiningPlayer: player,
+          joiningPlayer: { ...player, isFake: false },
           playerId: socket.id,
         });
 

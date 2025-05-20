@@ -25,8 +25,11 @@ export const markPlayerActive = ({
     return { markedActivePlayer: undefined };
   }
 
+  markedActivePlayer.isVip = !room.players.filter(
+    (p) => p.isActive && !p.isFake,
+  ).length;
   markedActivePlayer.isActive = true;
-  markedActivePlayer.isVip = !room.players.filter((p) => p.isActive).length;
+
   markedActivePlayer.id = newPlayerId;
 
   delete DB_PLAYERS[prevPlayerId];

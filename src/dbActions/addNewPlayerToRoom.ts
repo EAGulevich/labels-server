@@ -12,7 +12,7 @@ export const addNewPlayerToRoom = ({
 }: {
   roomCode: string;
   playerId: string;
-  joiningPlayer: Pick<Player, "name" | "avatarToken">;
+  joiningPlayer: Pick<Player, "name" | "avatarToken" | "isFake">;
 }): { newPlayer: DeepReadonly<DBPlayer> | undefined } => {
   const room = DB_ROOMS[roomCode];
 
@@ -32,7 +32,6 @@ export const addNewPlayerToRoom = ({
     isVip: !room.players.filter((p) => p.isActive).length,
     isActive: true,
     factStatus: FACT_STATUS.NOT_RECEIVED,
-    isFake: false,
   };
 
   room.players.push(newPlayer);
