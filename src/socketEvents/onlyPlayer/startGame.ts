@@ -1,10 +1,12 @@
 import { io } from "@app";
+import { addFact } from "@dbActions/addFact";
 import { findRoom } from "@dbActions/findRoom";
 import { startGame } from "@dbActions/startGame";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
+import { cloneDeepPlayer } from "@utils/cloneDeepPlayer";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 import { logger } from "@utils/logger";
 import { Socket } from "socket.io";
@@ -26,6 +28,24 @@ export const registerStartGame = (
         io.sockets.in(roomCode).emit("gameStarted", {
           room: cloneDeepRoom(startedRoom),
         });
+
+        setTimeout(() => {
+          const { addedFactToRoom, fromPlayer } = addFact({
+            factText: "TODO",
+            playerId: "fake" + startedRoom.code,
+          });
+
+          if (addedFactToRoom) {
+            io.sockets.in(addedFactToRoom.code).emit("playerAddedFact", {
+              room: cloneDeepRoom(addedFactToRoom),
+              eventData: {
+                fromPlayer: cloneDeepPlayer(fromPlayer),
+              },
+            });
+          } else {
+            logger("CRASHED", { isError: true });
+          }
+        }, 5 * 1000);
       }
     }
 

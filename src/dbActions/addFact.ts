@@ -1,4 +1,5 @@
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
+import { Player } from "@sharedTypes/types";
 
 import { DB_PLAYERS } from "../db/players";
 import { DB_ROOMS } from "../db/rooms";
@@ -10,20 +11,26 @@ export const addFact = ({
 }: {
   factText: string;
   playerId: string;
-}): {
-  addedFactToRoom?: DeepReadonly<DBRoom>;
-} => {
+}):
+  | {
+      addedFactToRoom: DeepReadonly<DBRoom>;
+      fromPlayer: DeepReadonly<Player>;
+    }
+  | {
+      addedFactToRoom: undefined;
+      fromPlayer: undefined;
+    } => {
   // todo later: если игрок дважды пытается добавить факт о себе
   const roomCode = DB_PLAYERS[playerId];
 
   if (!roomCode) {
-    return { addedFactToRoom: undefined };
+    return { addedFactToRoom: undefined, fromPlayer: undefined };
   } else {
     const room = DB_ROOMS[roomCode];
     const player = room?.players.find((p) => p.id === playerId);
 
     if (!room || !player) {
-      return { addedFactToRoom: undefined };
+      return { addedFactToRoom: undefined, fromPlayer: undefined };
     } else {
       const newFact: DBFact = {
         text: factText,
@@ -36,6 +43,7 @@ export const addFact = ({
 
       return {
         addedFactToRoom: room,
+        fromPlayer: player,
       };
     }
   }

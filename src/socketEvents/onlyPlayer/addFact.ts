@@ -4,6 +4,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@sharedTypes/events";
+import { cloneDeepPlayer } from "@utils/cloneDeepPlayer";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
 import { logger } from "@utils/logger";
 import { Socket } from "socket.io";
@@ -16,7 +17,7 @@ export const registerAddFact = (
       meta: { playerId: socket.id, factText: text },
     });
 
-    const { addedFactToRoom } = addFact({
+    const { addedFactToRoom, fromPlayer } = addFact({
       factText: text,
       playerId: socket.id,
     });
@@ -24,6 +25,9 @@ export const registerAddFact = (
     if (addedFactToRoom) {
       io.sockets.in(addedFactToRoom.code).emit("playerAddedFact", {
         room: cloneDeepRoom(addedFactToRoom),
+        eventData: {
+          fromPlayer: cloneDeepPlayer(fromPlayer),
+        },
       });
     } else {
       logger("CRASHED", { isError: true });

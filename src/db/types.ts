@@ -1,4 +1,4 @@
-import { AvatarToken } from "@sharedTypes/avatarTokens";
+import { AvatarToken, AvatarTokenBot } from "@sharedTypes/avatarTokens";
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
 import { ROOM_STATUSES } from "@sharedTypes/roomStatuses";
 
@@ -6,9 +6,10 @@ export type DBPlayer = {
   id: string;
   isVip: boolean;
   name: string;
-  avatarToken: AvatarToken;
+  avatarToken: AvatarToken | AvatarTokenBot;
   isActive: boolean;
   factStatus: FACT_STATUS;
+  isFake: boolean;
 };
 
 export type DBFact = {

@@ -32,7 +32,7 @@ export const markPlayerInactive = ({
   }
   markedInactivePlayer.isVip = false;
 
-  const firstActivePlayer = room.players.find((p) => p.isActive);
+  const firstActivePlayer = room.players.find((p) => p.isActive && !p.isFake);
 
   if (firstActivePlayer) {
     firstActivePlayer.isVip = true;

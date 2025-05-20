@@ -32,6 +32,7 @@ export const addNewPlayerToRoom = ({
     isVip: !room.players.filter((p) => p.isActive).length,
     isActive: true,
     factStatus: FACT_STATUS.NOT_RECEIVED,
+    isFake: false,
   };
 
   room.players.push(newPlayer);
