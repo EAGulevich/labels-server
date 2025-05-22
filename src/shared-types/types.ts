@@ -13,10 +13,19 @@ export type Player = {
   isFake: boolean;
 };
 
+export type Fact = {
+  id: string;
+  text: string;
+  supposedPlayer: Player | null;
+  isGuessed: boolean;
+};
+
 export type Room = {
   code: string;
   status: ROOM_STATUSES;
   hostId: string;
   players: Player[];
   isInactive: boolean;
+  round: number;
+  facts: Fact[];
 };

@@ -37,6 +37,8 @@ export interface ServerToClientEvents {
   gameStarted: (data: SSEData) => void;
 
   playerAddedFact: (data: SSEData<{ fromPlayer: Player }>) => void;
+
+  newRound: (data: SSEData) => void;
 }
 
 export interface ClientToServerEvents {

@@ -1,5 +1,6 @@
 import { io } from "@app";
 import { addFact } from "@dbActions/addFact";
+import { startRound } from "@dbActions/startRound";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -17,7 +18,7 @@ export const registerAddFact = (
       meta: { playerId: socket.id, factText: text },
     });
 
-    const { addedFactToRoom, fromPlayer } = addFact({
+    const { addedFactToRoom, fromPlayer, isAllFacts } = addFact({
       factText: text,
       playerId: socket.id,
     });
@@ -29,6 +30,22 @@ export const registerAddFact = (
           fromPlayer: cloneDeepPlayer(fromPlayer),
         },
       });
+
+      if (isAllFacts) {
+        setTimeout(() => {
+          const { changedRoom } = startRound({
+            roomCode: addedFactToRoom.code,
+          });
+
+          if (changedRoom) {
+            io.sockets.in(addedFactToRoom.code).emit("newRound", {
+              room: cloneDeepRoom(changedRoom),
+            });
+          }
+
+          //   TODO 5000
+        }, 5000);
+      }
     } else {
       logger("CRASHED", { isError: true });
     }

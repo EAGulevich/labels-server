@@ -17,6 +17,7 @@ export const createRoom = ({
     hostId: roomHostId,
     isInactive: false,
     facts: [],
+    round: 0,
   };
 
   DB_ROOMS[createdRoom.code] = createdRoom;

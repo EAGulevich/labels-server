@@ -8,6 +8,7 @@ import {
 } from "@sharedTypes/events";
 import { cloneDeepPlayer } from "@utils/cloneDeepPlayer";
 import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { fakeId } from "@utils/fakeId";
 import { logger } from "@utils/logger";
 import { Socket } from "socket.io";
 
@@ -31,8 +32,9 @@ export const registerStartGame = (
 
         setTimeout(() => {
           const { addedFactToRoom, fromPlayer } = addFact({
+            // TODO: выбрать рандомный факт
             factText: "TODO",
-            playerId: "fake" + startedRoom.code,
+            playerId: fakeId(startedRoom.code),
           });
 
           if (addedFactToRoom) {

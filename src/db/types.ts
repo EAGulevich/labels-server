@@ -1,6 +1,7 @@
 import { AvatarToken, AvatarTokenBot } from "@sharedTypes/avatarTokens";
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
 import { ROOM_STATUSES } from "@sharedTypes/roomStatuses";
+import { Player } from "@sharedTypes/types";
 
 export type DBPlayer = {
   id: string;
@@ -13,8 +14,10 @@ export type DBPlayer = {
 };
 
 export type DBFact = {
+  id: string;
   playerId: string;
   text: string;
+  supposedPlayer: Player | null;
   isGuessed: boolean;
 };
 
@@ -24,6 +27,7 @@ export type DBRoom = {
   hostId: string;
   players: DBPlayer[];
   isInactive: boolean;
+  round: number;
   facts: DBFact[];
 };
 

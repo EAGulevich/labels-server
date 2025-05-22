@@ -1,6 +1,7 @@
 import { addNewPlayerToRoom } from "@dbActions/addNewPlayerToRoom";
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
 import { ROOM_STATUSES } from "@sharedTypes/roomStatuses";
+import { fakeId } from "@utils/fakeId";
 
 import { DB_ROOMS } from "../db/rooms";
 import { DBPlayer, DBRoom, DeepReadonly } from "../db/types";
@@ -13,7 +14,7 @@ export const startGame = ({
   const room = DB_ROOMS[roomCode];
 
   const fakePlayer: DBPlayer = {
-    id: "fake" + roomCode,
+    id: fakeId(roomCode),
     factStatus: FACT_STATUS.NOT_RECEIVED,
     isVip: false,
     isActive: true,
