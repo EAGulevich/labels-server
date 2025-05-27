@@ -1,7 +1,7 @@
 import maxBy from "lodash.maxby";
 
 import { DB_ROOMS } from "../db/rooms";
-import { DBRoom, DeepReadonly } from "../db/types";
+import { DBCandidate, DBRoom, DeepReadonly } from "../db/types";
 
 export const applyVotesForFact = ({
   roomCode,
@@ -13,7 +13,9 @@ export const applyVotesForFact = ({
   if (room) {
     const fact = room.facts.find((f) => f.id === room.votingFact?.id);
 
-    const playerIdWithMaxVotes = maxBy(room.votingFact?.candidates, "votes");
+    const voteKey: keyof DBCandidate = "voteCount";
+
+    const playerIdWithMaxVotes = maxBy(room.votingFact?.candidates, voteKey);
 
     const isOnlyMax =
       room.votingFact?.candidates.filter(
