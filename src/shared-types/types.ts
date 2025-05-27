@@ -27,6 +27,10 @@ export type Fact = {
 
 export type Candidate = Player & { voteCount: number };
 
+export type VoteStory = {
+  [round: number]: (Player["id"] | "NOBODY")[];
+};
+
 export type Room = {
   code: string;
   status: ROOM_STATUSES;
@@ -35,6 +39,7 @@ export type Room = {
   isInactive: boolean;
   round: number;
   facts: Fact[];
+  story: VoteStory;
   votingFact?: {
     id: string;
     text: string;

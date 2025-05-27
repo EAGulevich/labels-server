@@ -17,5 +17,7 @@ export const cloneDeepRoom = (room: DeepReadonly<DBRoom>): Room => {
     players: [...room.players],
     votingFact,
     facts,
+    // TODO json
+    story: JSON.parse(JSON.stringify(room.story)),
   };
 };

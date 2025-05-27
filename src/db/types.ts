@@ -27,6 +27,10 @@ export type DBFact = {
 
 export type DBCandidate = DBPlayer & { voteCount: number };
 
+export type DBVoteStory = {
+  [round: number]: (DBPlayer["id"] | "NOBODY")[];
+};
+
 export type DBRoom = {
   code: string;
   status: ROOM_STATUSES;
@@ -35,6 +39,7 @@ export type DBRoom = {
   isInactive: boolean;
   round: number;
   facts: DBFact[];
+  story: DBVoteStory;
   votingFact?: {
     id: string;
     text: string;

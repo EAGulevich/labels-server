@@ -22,13 +22,19 @@ export const applyVotesForFact = ({
         (c) => c.voteCount === playerIdWithMaxVotes?.voteCount,
       ).length === 1;
 
+    if (!room.story[room.round]) {
+      room.story[room.round] = [];
+    }
+
     if (playerIdWithMaxVotes && fact) {
       if (isOnlyMax) {
         fact.supposedPlayer = playerIdWithMaxVotes;
         fact.vote[room.round] = playerIdWithMaxVotes.id;
+        room.story[room.round].push(playerIdWithMaxVotes.id);
       } else {
         fact.supposedPlayer = null;
         fact.vote[room.round] = "NOBODY";
+        room.story[room.round].push("NOBODY");
       }
     }
 

@@ -18,6 +18,7 @@ export const createRoom = ({
     isInactive: false,
     facts: [],
     round: 0,
+    story: {},
   };
 
   DB_ROOMS[createdRoom.code] = createdRoom;
