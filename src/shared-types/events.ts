@@ -38,7 +38,9 @@ export interface ServerToClientEvents {
 
   playerAddedFact: (data: SSEData<{ fromPlayer: Player }>) => void;
 
-  newRound: (data: SSEData) => void;
+  newRoundStarted: (data: SSEData) => void;
+
+  voting: (data: SSEData) => void;
 }
 
 export interface ClientToServerEvents {
@@ -71,5 +73,12 @@ export interface ClientToServerEvents {
   addFact: (
     data: { text: string },
     cb: (res: SSEDataWithError<{ createdFact: string }>) => void,
+  ) => void;
+
+  startVoting: () => void;
+
+  addVote: (
+    data: { candidateId: string },
+    cb: (data: { voted: true }) => void,
   ) => void;
 }

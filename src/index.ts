@@ -6,9 +6,11 @@ import {
   registerCreateRoom,
   registerFindRoomByHostId,
   registerReenterRoom,
+  registerStartVoting,
 } from "@socketEvents/onlyHost";
 import {
   registerAddFact,
+  registerAddVote,
   registerJoinRoom,
   registerStartGame,
 } from "@socketEvents/onlyPlayer";
@@ -30,11 +32,13 @@ io.on("connection", (socket) => {
   registerCreateRoom(socket);
   registerReenterRoom(socket);
   registerFindRoomByHostId(socket);
+  registerStartVoting(socket);
 
   //player
   registerJoinRoom(socket);
   registerStartGame(socket);
   registerAddFact(socket);
+  registerAddVote(socket);
 
   // common
   registerDisconnectingHostOrPlayer(socket);

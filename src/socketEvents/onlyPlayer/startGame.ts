@@ -47,6 +47,7 @@ export const registerStartGame = (
           } else {
             logger("CRASHED", { isError: true });
           }
+          //   TODO 5000
         }, 5 * 1000);
       }
     }

@@ -1,6 +1,6 @@
 import { io } from "@app";
 import { addFact } from "@dbActions/addFact";
-import { startRound } from "@dbActions/startRound";
+import { startNewRound } from "@dbActions/startNewRound";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -33,12 +33,12 @@ export const registerAddFact = (
 
       if (isAllFacts) {
         setTimeout(() => {
-          const { changedRoom } = startRound({
+          const { changedRoom } = startNewRound({
             roomCode: addedFactToRoom.code,
           });
 
           if (changedRoom) {
-            io.sockets.in(addedFactToRoom.code).emit("newRound", {
+            io.sockets.in(addedFactToRoom.code).emit("newRoundStarted", {
               room: cloneDeepRoom(changedRoom),
             });
           }

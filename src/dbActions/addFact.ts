@@ -41,6 +41,9 @@ export const addFact = ({
         playerId: playerId,
         isGuessed: false,
         supposedPlayer: null,
+        vote: {
+          0: "NOBODY",
+        },
       };
 
       room.facts.push(newFact);

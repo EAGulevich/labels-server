@@ -2,4 +2,5 @@ export enum ROOM_STATUSES {
   CREATED = "CREATED",
   STARTED = "STARTED",
   ROUND = "ROUND",
+  VOTING = "VOTING",
 }

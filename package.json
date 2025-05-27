@@ -26,6 +26,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "lodash.maxby": "^4.6.0",
     "module-alias": "^2.2.3",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0",
@@ -35,6 +36,7 @@
     "@eslint/js": "^9.23.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/lodash.maxby": "^4.6.9",
     "@types/node": "^22.13.11",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
