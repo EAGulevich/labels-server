@@ -13,7 +13,7 @@
     "lint": "eslint --fix .",
     "format": "prettier --write .",
     "build": "tsc",
-    "start": "set NODE_ENV=production && nodemon dist/index.js"
+    "start": "nodemon dist/index.js"
   },
   "_moduleAliases": {
     "@sharedTypes": "dist/shared-types",
