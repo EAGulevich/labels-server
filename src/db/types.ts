@@ -25,7 +25,7 @@ export type DBFact = {
   vote: DBVote;
 };
 
-export type DBCandidate = DBPlayer & { voteCount: number };
+export type DBCandidate = DBPlayer & { votesFromPlayers: string[] };
 
 export type DBVoteStory = {
   [round: number]: (DBPlayer["id"] | "NOBODY")[];

@@ -8,12 +8,12 @@
   },
   "scripts": {
     "watch": "tsc -w",
-    "dev": "nodemon --inspect dist/index.js",
+    "dev": "set NODE_ENV=development && nodemon --inspect dist/index.js ",
     "jest": "jest -i",
     "lint": "eslint --fix .",
     "format": "prettier --write .",
     "build": "tsc",
-    "start": "nodemon dist/index.js"
+    "start": "set NODE_ENV=production && nodemon dist/index.js"
   },
   "_moduleAliases": {
     "@sharedTypes": "dist/shared-types",
@@ -24,13 +24,14 @@
     "@constants": "dist/constants.js"
   },
   "dependencies": {
+    "@sentry/node": "^9.24.0",
+    "@sentry/types": "^9.24.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "lodash.maxby": "^4.6.0",
     "module-alias": "^2.2.3",
     "socket.io": "^4.8.1",
-    "uuid": "^11.1.0",
-    "winston": "^3.17.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",

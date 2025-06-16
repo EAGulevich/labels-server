@@ -1,10 +1,14 @@
+import { sentryLog } from "@utils/logger";
+
 import { DB_ROOMS } from "../db/rooms";
 import { DBRoom, DeepReadonly } from "../db/types";
 
 export const addVote = ({
   roomCode,
   candidateId,
+  playerId,
 }: {
+  playerId: string;
   roomCode: string;
   candidateId: string;
 }): {
@@ -16,17 +20,61 @@ export const addVote = ({
     (c) => c.id === candidateId,
   );
 
-  if (!room || !candidate) {
+  if (!room || !candidate || !room.votingFact) {
+    sentryLog({
+      severity: "error",
+      roomCode,
+      eventFrom: "DB",
+      actionName: "errorChangingDB",
+      changes: [],
+      message:
+        "Не удалось добавить голос кандидату, т.к. комната, факт для голосования или кандидат не найден",
+    });
+
     return {
       changedRoom: undefined,
       isAllPlayersVotedForFact: undefined,
     };
   }
 
-  candidate.voteCount = candidate.voteCount + 1;
+  const isPlayerAlreadyVoted = room.votingFact.candidates.some((c) =>
+    c.votesFromPlayers.includes(playerId),
+  );
+
+  if (isPlayerAlreadyVoted) {
+    sentryLog({
+      severity: "error",
+      roomCode,
+      eventFrom: "DB",
+      actionName: "errorChangingDB",
+      changes: [],
+      message:
+        "Не удалось добавить голос кандидату, т.к. этот игрок уже голосовал",
+    });
+
+    return {
+      changedRoom: undefined,
+      isAllPlayersVotedForFact: undefined,
+    };
+  }
+
+  candidate.votesFromPlayers.push(playerId);
+  sentryLog({
+    severity: "info",
+    roomCode,
+    eventFrom: "DB",
+    actionName: "DBChanged",
+    changes: [
+      {
+        fieldName: "candidate.votesFromPlayers",
+        newValue: candidate.votesFromPlayers,
+      },
+    ],
+    message: `Добавлен гололс за кандидата [${candidate.name}]`,
+  });
 
   const votesCount = room.votingFact?.candidates.reduce((acc, candidate) => {
-    acc += candidate.voteCount;
+    acc += candidate.votesFromPlayers.length;
     return acc;
   }, 0);
 

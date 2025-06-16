@@ -4,6 +4,7 @@ import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
 
 type ValidateProps = {
   roomCode: string;
+  playerName: string;
 };
 
 type ValidateReturn = {
@@ -13,6 +14,7 @@ type ValidateReturn = {
 
 export const validateJoinRoom = ({
   roomCode,
+  playerName,
 }: ValidateProps): ValidateReturn => {
   const error = null;
 
@@ -37,6 +39,12 @@ export const validateJoinRoom = ({
     const message = `Not joined to room, because there is max number of players in the room ${room.code}`;
     return {
       code: ERROR_CODE.MAX_ROOM_CAPACITY_JOIN_ERROR,
+      message,
+    };
+  } else if (room.players.some((p) => p.name === playerName)) {
+    const message = `Not joined to room, because player name already exists in the room ${room.code}`;
+    return {
+      code: ERROR_CODE.PLAYER_NAME_ALREADY_EXISTS_JOIN_ERROR,
       message,
     };
   }

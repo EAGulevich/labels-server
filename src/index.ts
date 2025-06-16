@@ -1,6 +1,8 @@
 import "module-alias/register";
+import "./instrument";
 
 import { app, io, server } from "@app";
+import { UNKNOWN_ROOM_CODE } from "@constants";
 import { registerDisconnectingHostOrPlayer } from "@socketEvents/common";
 import {
   registerCreateRoom,
@@ -14,7 +16,7 @@ import {
   registerJoinRoom,
   registerStartGame,
 } from "@socketEvents/onlyPlayer";
-import { logger } from "@utils/logger";
+import { sentryLog } from "@utils/logger";
 import cors from "cors";
 
 const PORT = process.env.PORT || 5001;
@@ -26,7 +28,17 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  logger(`USER CONNECTED: ${socket.id}`);
+  sentryLog({
+    message: "Пользователь подключился",
+    eventFrom: "client",
+    actionName: "connection",
+    roomCode: UNKNOWN_ROOM_CODE,
+    eventInputData: {
+      socketId: socket.id,
+    },
+    severity: "info",
+    eventFromType: "unknown",
+  });
 
   // host
   registerCreateRoom(socket);
