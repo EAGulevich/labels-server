@@ -51,25 +51,30 @@ export type LogDataType = {
 export const sentryLog = (logData: LogDataType) => {
   const { severity, message, eventFrom, roomCode, actionName } = logData;
 
-  let meta: Record<string, unknown> = {
-    severity,
-    environment: process.env.NODE_ENV,
-    message: message,
-    _room: roomCode,
-    _from: eventFrom,
-    _action: actionName,
+  let meta: { c: Record<string, unknown>; extra: Record<string, unknown> } = {
+    c: {
+      severity,
+      environment: process.env.NODE_ENV,
+      message,
+      room_code: roomCode,
+      from: eventFrom,
+      action: actionName,
+    },
+    extra: {},
   };
 
   if (eventFrom === "server") {
-    meta._to = logData.eventTo;
+    meta.c.to = logData.eventTo;
   } else if (eventFrom === "client") {
-    meta._from_type = logData.eventFromType;
-    meta["~input_data"] = logData.eventInputData;
+    meta.c.from_type = logData.eventFromType;
+    meta.extra.input_data = logData.eventInputData;
   } else {
-    meta["~changes"] = logData.changes;
+    meta.extra.changes = logData.changes;
   }
 
-  meta["~room_state"] = DB_ROOMS[roomCode] || null;
+  meta.extra.room_state = DB_ROOMS[roomCode] || null;
+  meta.c.status = DB_ROOMS[roomCode]?.status || null;
+  meta.c.round = DB_ROOMS[roomCode]?.round || null;
 
   Sentry.logger[severity](message, flattenObject(meta));
 };
