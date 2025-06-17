@@ -36,6 +36,7 @@ export const startGame = ({
     name: "Robot",
     avatarToken: "ROBOT_BOT",
     isFake: true,
+    isAvatarAutoSelected: true,
   };
 
   room.status = ROOM_STATUSES.STARTED;

@@ -1,5 +1,7 @@
+import { AvatarToken } from "@sharedTypes/avatarTokens";
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
 import { Player } from "@sharedTypes/types";
+import { getRandomElement } from "@utils/getRandomElement";
 import { sentryLog } from "@utils/logger";
 
 import { DB_PLAYERS } from "../db/players";
@@ -13,7 +15,7 @@ export const addNewPlayerToRoom = ({
 }: {
   roomCode: string;
   playerId: string;
-  joiningPlayer: Pick<Player, "name" | "avatarToken" | "isFake">;
+  joiningPlayer: Pick<Player, "name" | "isFake">;
 }): { newPlayer: DeepReadonly<DBPlayer> | undefined } => {
   const room = DB_ROOMS[roomCode];
 
@@ -44,12 +46,18 @@ export const addNewPlayerToRoom = ({
     return { newPlayer: undefined };
   }
 
+  const unusedAvatars = Object.values(AvatarToken).filter(
+    (val) => !room.players.some((p) => p.avatarToken === val),
+  );
+
   const newPlayer: Player = {
     ...joiningPlayer,
     id: playerId,
     isVip: !room.players.filter((p) => p.isActive).length,
     isActive: true,
     factStatus: FACT_STATUS.NOT_RECEIVED,
+    avatarToken: getRandomElement(unusedAvatars),
+    isAvatarAutoSelected: true,
   };
 
   room.players.push(newPlayer);

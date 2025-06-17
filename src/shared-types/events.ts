@@ -33,6 +33,7 @@ export interface ServerToClientEvents {
     data: SSEData<{ markedInactivePlayer: Player }>,
   ) => void;
   updateVipPlayer: (data: SSEData<{ newVipPlayer: Player }>) => void;
+  playerChangedAvatar: (data: SSEData<{ updatedPlayer: Player }>) => void;
 
   gameStarted: (data: SSEData) => void;
 
@@ -63,9 +64,16 @@ export interface ClientToServerEvents {
     data: {
       prevPlayerId?: string;
       roomCode: Room["code"];
-      player: Pick<Player, "name" | "avatarToken">;
+      player: Pick<Player, "name">;
     },
     cb: (res: SSEDataWithError<{ joinedPlayer: Player }>) => void,
+  ) => void;
+
+  changeAvatar: (
+    data: { avatarToken: Player["avatarToken"] },
+    cb: (
+      res: SSEDataWithError<{ changedAvatar: Player["avatarToken"] }>,
+    ) => void,
   ) => void;
 
   startGame: () => void;

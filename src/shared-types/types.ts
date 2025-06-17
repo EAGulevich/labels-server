@@ -8,6 +8,7 @@ export type Player = {
   isVip: boolean;
   name: string;
   avatarToken: AvatarToken | AvatarTokenBot;
+  isAvatarAutoSelected: boolean;
   isActive: boolean;
   factStatus: FACT_STATUS;
   isFake: boolean;

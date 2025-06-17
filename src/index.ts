@@ -16,6 +16,7 @@ import {
   registerJoinRoom,
   registerStartGame,
 } from "@socketEvents/onlyPlayer";
+import { registerChangeAvatar } from "@socketEvents/onlyPlayer/changeAvatar";
 import { sentryLog } from "@utils/logger";
 import cors from "cors";
 
@@ -48,6 +49,7 @@ io.on("connection", (socket) => {
 
   //player
   registerJoinRoom(socket);
+  registerChangeAvatar(socket);
   registerStartGame(socket);
   registerAddFact(socket);
   registerAddVote(socket);

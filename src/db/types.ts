@@ -10,6 +10,7 @@ export type DBPlayer = {
   isActive: boolean;
   factStatus: FACT_STATUS;
   isFake: boolean;
+  isAvatarAutoSelected: boolean;
 };
 
 type DBVote = {
