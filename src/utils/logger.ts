@@ -53,9 +53,6 @@ export const sentryLog = (logData: LogDataType) => {
 
   let meta: { c: Record<string, unknown>; extra: Record<string, unknown> } = {
     c: {
-      severity,
-      environment: process.env.NODE_ENV,
-      message,
       room_code: roomCode,
       from: eventFrom,
       action: actionName,
