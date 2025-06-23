@@ -1,6 +1,7 @@
 import { AvatarToken } from "@sharedTypes/avatarTokens";
 import { FACT_STATUS } from "@sharedTypes/factStatuses";
 import { Player } from "@sharedTypes/types";
+import { fakeId } from "@utils/fakeId";
 import { getRandomElement } from "@utils/getRandomElement";
 import { sentryLog } from "@utils/logger";
 
@@ -56,7 +57,10 @@ export const addNewPlayerToRoom = ({
     isVip: !room.players.filter((p) => p.isActive).length,
     isActive: true,
     factStatus: FACT_STATUS.NOT_RECEIVED,
-    avatarToken: getRandomElement(unusedAvatars),
+    avatarToken:
+      playerId === fakeId(room.code)
+        ? "ROBOT_BOT"
+        : getRandomElement(unusedAvatars),
     isAvatarAutoSelected: true,
   };
 
