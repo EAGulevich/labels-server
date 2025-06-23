@@ -4,6 +4,7 @@ import {
   ServerToClientEvents,
 } from "@sharedTypes/events";
 import { flattenObject } from "@utils/flattenObject";
+import { version } from "package.json";
 import { Socket } from "socket.io";
 
 import { DB_ROOMS } from "../db/rooms";
@@ -53,6 +54,7 @@ export const sentryLog = (logData: LogDataType) => {
 
   let meta: { c: Record<string, unknown>; extra: Record<string, unknown> } = {
     c: {
+      version,
       room_code: roomCode,
       from: eventFrom,
       action: actionName,
