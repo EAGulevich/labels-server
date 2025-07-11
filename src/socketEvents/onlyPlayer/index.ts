@@ -1,4 +1,4 @@
 export * from "./addFact";
 export * from "./addVote";
-export * from "./joinRoom/joinRoom";
-export * from "./startGame/startGame";
+export * from "./joinRoom";
+export * from "./startGame";

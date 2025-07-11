@@ -1,102 +1,47 @@
-import { UNKNOWN_ROOM_CODE } from "@constants";
-import { findRoom } from "@dbActions/findRoom";
-import { getTypeOfSocket } from "@dbActions/getTypeOfSocket";
-import { returnHostToRoom } from "@dbActions/returnHostToRoom";
-import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "@sharedTypes/events";
-import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { SocketType } from "@app";
+import { HostService } from "@services/host.service";
 import { sentryLog } from "@utils/logger";
-import { Socket } from "socket.io";
+import { prettyErr } from "@utils/prettyErr";
 
-export const registerReenterRoom = (
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
-) => {
-  socket.on("reenterRoom", (eventInputData, cb) => {
-    const { roomHostId } = eventInputData;
+export const registerReenterRoom = (socket: SocketType) => {
+  socket.on("reenterRoom", async (_, cb) => {
     sentryLog({
-      eventFrom: "client",
-      eventFromType: getTypeOfSocket(socket.id),
-      severity: "info",
-      message: "Хост перезаходит в комнату",
-      roomCode:
-        findRoom({ findBy: "hostId", value: roomHostId })?.code ||
-        UNKNOWN_ROOM_CODE,
       actionName: "reenterRoom",
-      eventInputData: {
-        socketId: socket.id,
-        ...eventInputData,
-      },
+      severity: "info",
+      eventFrom: "client",
+      message: "Хост перезаходит в комнату",
+      userId: socket.data.userId,
     });
+    try {
+      const { room } = await HostService.reenterRoom({
+        hostId: socket.data.userId,
+      });
 
-    const foundedRoom = findRoom({ findBy: "hostId", value: roomHostId });
+      await socket.join(room.code);
 
-    if (!foundedRoom) {
-      const message = `Не найдена комната, в которой хост имеет id=${roomHostId}`;
       cb({
-        error: {
-          code: ERROR_CODE.ROOM_NOT_FOUND_BY_HOST_ID_REENTER_ERROR,
-          message,
-        },
+        success: true,
+        room,
       });
       sentryLog({
         severity: "info",
         eventFrom: "server",
-        eventTo: getTypeOfSocket(socket.id),
-        roomCode: UNKNOWN_ROOM_CODE,
-        message,
+        message: "Хост успешно перезашел в комнату",
+        outputRoom: room,
         actionName: ">>> reenterRoom",
       });
-    } else {
-      const { changedRoom } = returnHostToRoom({
-        roomCode: foundedRoom.code,
-        newHostId: socket.id,
+    } catch (err) {
+      cb({
+        success: false,
+        error: prettyErr(err),
       });
-
-      if (changedRoom) {
-        socket.join(changedRoom.code);
-
-        cb({
-          data: {
-            room: cloneDeepRoom(foundedRoom),
-            eventData: {
-              newRoomHostId: foundedRoom.hostId,
-            },
-          },
-        });
-        sentryLog({
-          severity: "info",
-          eventFrom: "server",
-          eventTo: getTypeOfSocket(socket.id),
-          roomCode: changedRoom.code,
-          message: "Хост вернулся в комнату",
-          actionName: ">>> reenterRoom",
-        });
-
-        socket.broadcast.in(foundedRoom.code).emit("hostReturnedToRoom", {
-          room: cloneDeepRoom(foundedRoom),
-        });
-
-        sentryLog({
-          severity: "info",
-          eventFrom: "server",
-          eventTo: "players",
-          roomCode: changedRoom.code,
-          message: "Хост вернулся в комнату",
-          actionName: "hostReturnedToRoom",
-        });
-      } else {
-        sentryLog({
-          severity: "error",
-          eventFrom: "server",
-          eventTo: "nobody",
-          roomCode: UNKNOWN_ROOM_CODE,
-          message: "Не удалось вернуть хоста в комнату",
-          actionName: "error",
-        });
-      }
+      sentryLog({
+        severity: "error",
+        eventFrom: "server",
+        message: prettyErr(err).description,
+        error: err,
+        actionName: ">>> reenterRoom",
+      });
     }
   });
 };

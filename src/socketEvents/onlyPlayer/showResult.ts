@@ -3,19 +3,17 @@ import { PlayerService } from "@services/player.service";
 import { sentryLog } from "@utils/logger";
 import { prettyErr } from "@utils/prettyErr";
 
-export const registerAddFact = (socket: SocketType) => {
-  socket.on("addFact", async (eventInputData, cb) => {
+export const registerShowResult = (socket: SocketType) => {
+  socket.on("showResult", async (_, cb) => {
     sentryLog({
-      actionName: "addFact",
+      actionName: "showResult",
       severity: "info",
       eventFrom: "client",
-      message: "Игрок добавляет факт",
+      message: "Игрок запрашивает результаты игры",
       userId: socket.data.userId,
-      input: eventInputData,
     });
     try {
-      await PlayerService.addFact({
-        factText: eventInputData.text,
+      await PlayerService.showResults({
         playerId: socket.data.userId,
       });
     } catch (err) {
@@ -28,7 +26,7 @@ export const registerAddFact = (socket: SocketType) => {
         eventFrom: "server",
         message: prettyErr(err).description,
         error: err,
-        actionName: ">>> addFact",
+        actionName: ">>> showResult",
       });
     }
   });

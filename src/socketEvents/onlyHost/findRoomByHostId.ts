@@ -1,52 +1,37 @@
-import { UNKNOWN_ROOM_CODE } from "@constants";
-import { findRoom } from "@dbActions/findRoom";
-import { getTypeOfSocket } from "@dbActions/getTypeOfSocket";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "@sharedTypes/events";
-import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { SocketType } from "@app";
+import { HostService } from "@services/host.service";
 import { sentryLog } from "@utils/logger";
-import { Socket } from "socket.io";
 
-export const registerFindRoomByHostId = (
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
-) => {
-  socket.on("findRoomByHostId", (eventInputData, cb) => {
-    const { roomHostId } = eventInputData;
-    const room = findRoom({ findBy: "hostId", value: roomHostId });
-
+export const registerFindRoomByHostId = (socket: SocketType) => {
+  socket.on("findRoomByHostId", async (_, cb) => {
     sentryLog({
+      actionName: "findRoomByHostId",
       severity: "info",
       eventFrom: "client",
-      eventFromType: getTypeOfSocket(socket.id),
-      roomCode: room?.code || UNKNOWN_ROOM_CODE,
-      actionName: "findRoomByHostId",
-      eventInputData: {
-        socketId: socket.id,
-      },
-      message: "Поиск комнаты по id хоста",
+      message: "Хост узнает о наличии комнаты",
+      userId: socket.data.userId,
     });
-
-    if (room) {
-      cb({ foundedRoom: cloneDeepRoom(room) });
-      sentryLog({
-        severity: "info",
-        eventFrom: "server",
-        eventTo: getTypeOfSocket(socket.id),
-        roomCode: room.code,
-        actionName: ">>> findRoomByHostId",
-        message: "Комната найдена",
+    try {
+      const { room } = await HostService.findRoom({
+        hostId: socket.data.userId,
       });
-    } else {
-      cb({ foundedRoom: undefined });
+
+      cb({ foundedRoom: room });
       sentryLog({
         severity: "info",
         eventFrom: "server",
-        eventTo: getTypeOfSocket(socket.id),
-        roomCode: UNKNOWN_ROOM_CODE,
+        actionName: ">>> findRoomByHostId",
+        message: "Хосту отдана информация о наличии комнаты",
+        outputRoom: room,
+      });
+    } catch {
+      cb({ foundedRoom: null });
+      sentryLog({
+        severity: "info",
+        eventFrom: "server",
         actionName: ">>> findRoomByHostId",
         message: "Комната не найдена",
+        outputRoom: null,
       });
     }
   });

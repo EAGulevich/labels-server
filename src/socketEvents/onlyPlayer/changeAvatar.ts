@@ -1,125 +1,50 @@
-import { io } from "@app";
-import { UNKNOWN_ROOM_CODE } from "@constants";
-import { changePlayerAvatar } from "@dbActions/changePlayerAvatar";
-import { findRoom } from "@dbActions/findRoom";
-import { getTypeOfSocket } from "@dbActions/getTypeOfSocket";
-import { ERROR_CODE } from "@sharedTypes/errorNameCodes";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "@sharedTypes/events";
-import { cloneDeepPlayer } from "@utils/cloneDeepPlayer";
-import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { SocketType } from "@app";
+import { PlayerService } from "@services/player.service";
 import { sentryLog } from "@utils/logger";
-import { Socket } from "socket.io";
+import { prettyErr } from "@utils/prettyErr";
 
-export const registerChangeAvatar = (
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
-) => {
-  socket.on("changeAvatar", ({ avatarToken }, cb) => {
-    const room = findRoom({ findBy: "playerId", value: socket.id });
-
+export const registerChangeAvatar = (socket: SocketType) => {
+  socket.on("changeAvatar", async ({ avatarToken }, cb) => {
     sentryLog({
+      actionName: "changeAvatar",
       severity: "info",
       eventFrom: "client",
-      eventFromType: getTypeOfSocket(socket.id),
-      roomCode: room?.code || UNKNOWN_ROOM_CODE,
-      actionName: "changeAvatar",
-      eventInputData: {
-        socketId: socket.id,
-        avatarToken,
-      },
-      message: `Игрок изменяет аватар на [${avatarToken}]`,
+      message: "Игрок меняет авата",
+      userId: socket.data.userId,
+      input: { avatarToken },
     });
-
-    if (!room) {
-      sentryLog({
-        severity: "error",
-        eventFrom: "server",
-        roomCode: UNKNOWN_ROOM_CODE,
-        actionName: "error",
-        message: `Не удалось изменить аватар игрока [${avatarToken}], т.к. комната не найдена`,
-        eventTo: "nobody",
+    try {
+      const { room, newAvatarToken } = await PlayerService.changePlayerAvatar({
+        playerId: socket.data.userId,
+        avatarToken,
       });
-      return;
-    }
 
-    if (
-      room?.players.some(
-        (p) => p.avatarToken === avatarToken && p.id !== socket.id,
-      )
-    ) {
       cb({
-        error: {
-          code: ERROR_CODE.CHANGE_AVATAR_ALREADY_USED_ERROR,
-          message: "Не удалось изменить аватар, т.к. он занят другим игроком",
+        success: true,
+        room,
+        extra: {
+          changedAvatar: newAvatarToken,
         },
       });
       sentryLog({
         severity: "info",
         eventFrom: "server",
-        roomCode: room.code,
+        message: "Игрок успешно изменил аватар",
         actionName: ">>> changeAvatar",
-        message: `Не удалось изменить аватар игрока [${avatarToken}], т.к. аватар уже занят`,
-        eventTo: "player",
+        outputRoom: room,
       });
-
-      return;
-    }
-
-    const { changedRoom, updatedPlayer } = changePlayerAvatar({
-      roomCode: room.code,
-      playerId: socket.id,
-      avatarToken,
-    });
-
-    if (!changedRoom || !updatedPlayer) {
+    } catch (err) {
+      cb({
+        success: false,
+        error: prettyErr(err),
+      });
       sentryLog({
         severity: "error",
         eventFrom: "server",
-        roomCode: room.code,
-        actionName: "error",
-        message: "Не удалось изменить аватар игрока",
-        eventTo: "nobody",
+        message: prettyErr(err).description,
+        error: err,
+        actionName: ">>> changeAvatar",
       });
-      return;
     }
-
-    cb({
-      data: {
-        room: cloneDeepRoom(changedRoom),
-        eventData: {
-          changedAvatar: avatarToken,
-        },
-      },
-    });
-
-    sentryLog({
-      severity: "info",
-      eventFrom: "server",
-      roomCode: room.code,
-      actionName: "playerChangedAvatar",
-      message: `Аватар успешно изменен`,
-      eventTo: `player`,
-    });
-
-    io.sockets
-      .in(room.code)
-      .except(socket.id)
-      .emit("playerChangedAvatar", {
-        room: cloneDeepRoom(changedRoom),
-        eventData: {
-          updatedPlayer: cloneDeepPlayer(updatedPlayer),
-        },
-      });
-
-    sentryLog({
-      severity: "info",
-      eventFrom: "server",
-      roomCode: room.code,
-      actionName: "playerChangedAvatar",
-      message: `Игрок [${updatedPlayer.name}] изменил аватар на [${updatedPlayer.avatarToken}]`,
-      eventTo: `all except ${socket.id}`,
-    });
   });
 };

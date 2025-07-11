@@ -1,45 +1,53 @@
-import { UNKNOWN_ROOM_CODE } from "@constants";
-import { createRoom } from "@dbActions/createRoom";
-import { getTypeOfSocket } from "@dbActions/getTypeOfSocket";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "@sharedTypes/events";
-import { cloneDeepRoom } from "@utils/cloneDeepRoom";
+import { SocketType } from "@app";
+import { HostService } from "@services/host.service";
 import { sentryLog } from "@utils/logger";
-import { Socket } from "socket.io";
+import { prettyErr } from "@utils/prettyErr";
 
-export const registerCreateRoom = (
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
-) => {
-  socket.on("createRoom", (_, cb) => {
+export const registerCreateRoom = (socket: SocketType) => {
+  socket.on("createRoom", async (_, cb) => {
     sentryLog({
+      actionName: "createRoom",
       severity: "info",
       eventFrom: "client",
-      eventFromType: getTypeOfSocket(socket.id),
-      actionName: "createRoom",
-      eventInputData: { socketId: socket.id },
-      roomCode: UNKNOWN_ROOM_CODE,
-      message: "Создание комнаты",
+      message: "Хост создает комнату",
+      userId: socket.data.userId,
     });
+    try {
+      // при создании используем текущий socket.id для хоста
+      const hostId = socket.id;
+      const { room } = await HostService.createRoom({
+        hostId,
+      });
 
-    const { createdRoom } = createRoom({ roomHostId: socket.id });
-    socket.join(createdRoom.code);
+      socket.data.userId = socket.id;
+      await socket.join(room.code);
 
-    cb({
-      room: cloneDeepRoom(createdRoom),
-      eventData: {
-        newRoomHostId: createdRoom.hostId,
-      },
-    });
-
-    sentryLog({
-      severity: "info",
-      eventFrom: "server",
-      eventTo: getTypeOfSocket(socket.id),
-      roomCode: createdRoom.code,
-      message: `Комната создана ${createdRoom.code}`,
-      actionName: ">>> createRoom",
-    });
+      cb({
+        success: true,
+        room: room,
+        extra: {
+          userId: hostId,
+        },
+      });
+      sentryLog({
+        severity: "info",
+        eventFrom: "server",
+        actionName: ">>> createRoom",
+        outputRoom: room,
+        message: "Комната создана",
+      });
+    } catch (err) {
+      cb({
+        success: false,
+        error: prettyErr(err),
+      });
+      sentryLog({
+        severity: "error",
+        eventFrom: "server",
+        message: prettyErr(err).description,
+        error: err,
+        actionName: ">>> createRoom",
+      });
+    }
   });
 };
