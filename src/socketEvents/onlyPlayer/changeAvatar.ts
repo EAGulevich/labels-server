@@ -5,14 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerChangeAvatar = (socket: SocketType) => {
   socket.on("changeAvatar", async ({ avatarToken }, cb) => {
-    sentryLog({
-      actionName: "changeAvatar",
-      severity: "info",
-      eventFrom: "client",
-      message: "Игрок меняет авата",
-      userId: socket.data.userId,
-      input: { avatarToken },
-    });
     try {
       const { room, newAvatarToken } = await PlayerService.changePlayerAvatar({
         playerId: socket.data.userId,

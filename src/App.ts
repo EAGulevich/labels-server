@@ -7,21 +7,6 @@ export const app = express();
 
 export const server = http.createServer(app);
 
-export const io = new Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  {},
-  { userId: string }
->(server, {
-  cors: {
-    origin: [
-      "https://game-labels-preview.vercel.app",
-      "https://game-labels.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-  },
-});
-
 export type SocketData = {
   userId: string;
 };
@@ -32,3 +17,18 @@ export type SocketType = Socket<
   {},
   SocketData
 >;
+
+export const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  {},
+  SocketData
+>(server, {
+  cors: {
+    origin: [
+      "https://game-labels-preview.vercel.app",
+      "https://game-labels.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+  },
+});

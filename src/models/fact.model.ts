@@ -10,7 +10,7 @@ import {
 } from "@shared/constants/validations";
 import { ERROR_CODES, FACT_STATUSES } from "@shared/types";
 import { KnownError } from "@utils/KnownError";
-import { sentryLog, sentryLogError } from "@utils/logger";
+import { sentryLogError } from "@utils/logger";
 import {
   BelongsToGetAssociationMixin,
   CreationOptional,
@@ -130,13 +130,7 @@ FactModel.init(
             extra: {
               fromPlayer: mapToPlayerClient(fromPlayer),
             },
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "playerAddedFact",
-            message: `Игроком [${fromPlayer.name}] добавлен факт [${fact.text}]`,
-            outputRoom: roomWithAddedFact,
+            logMsg: `Игроком [${fromPlayer.name}] добавлен факт [${fact.text}]`,
           });
 
           const isAllFactsReceived =

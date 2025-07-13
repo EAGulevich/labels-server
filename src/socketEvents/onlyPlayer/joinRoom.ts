@@ -6,14 +6,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerJoinRoom = (socket: SocketType) => {
   socket.on("joinRoom", async ({ roomCode, player }, cb) => {
-    sentryLog({
-      actionName: "joinRoom",
-      severity: "info",
-      eventFrom: "client",
-      message: "Игрок присоединяется к комнате",
-      userId: socket.data.userId,
-      input: { roomCode, player },
-    });
     try {
       const { room, joinedPlayer } = await PlayerService.joinRoom({
         roomCode,

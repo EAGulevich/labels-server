@@ -5,7 +5,6 @@ import { RoomModel } from "@models/room.model";
 import { GameService } from "@services/game.service";
 import { ERROR_CODES } from "@shared/types";
 import { KnownError } from "@utils/KnownError";
-import { sentryLog } from "@utils/logger";
 import {
   BelongsToGetAssociationMixin,
   CreationOptional,
@@ -113,14 +112,8 @@ VoteModel.init(
         const roomWithFullInfo = await room.getFullInfo();
 
         io.to(room.code).emit("voting", {
+          logMsg: `Голос принят`,
           room: roomWithFullInfo,
-        });
-        sentryLog({
-          severity: "info",
-          eventFrom: "server",
-          message: `Голос принят`,
-          actionName: "voting",
-          outputRoom: roomWithFullInfo,
         });
 
         if (isAllPlayersVotedForFact) {

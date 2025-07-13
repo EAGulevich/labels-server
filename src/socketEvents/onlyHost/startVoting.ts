@@ -5,13 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerStartVoting = (socket: SocketType) => {
   socket.on("startVoting", async (_, cb) => {
-    sentryLog({
-      actionName: "startVoting",
-      severity: "info",
-      eventFrom: "client",
-      message: "Хост запрашивает начать голосование",
-      userId: socket.data.userId,
-    });
     try {
       await HostService.startVoting({
         hostId: socket.data.userId,

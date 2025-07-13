@@ -5,13 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerShowResult = (socket: SocketType) => {
   socket.on("showResult", async (_, cb) => {
-    sentryLog({
-      actionName: "showResult",
-      severity: "info",
-      eventFrom: "client",
-      message: "Игрок запрашивает результаты игры",
-      userId: socket.data.userId,
-    });
     try {
       await PlayerService.showResults({
         playerId: socket.data.userId,

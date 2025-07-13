@@ -5,13 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerReenterRoom = (socket: SocketType) => {
   socket.on("reenterRoom", async (_, cb) => {
-    sentryLog({
-      actionName: "reenterRoom",
-      severity: "info",
-      eventFrom: "client",
-      message: "Хост перезаходит в комнату",
-      userId: socket.data.userId,
-    });
     try {
       const { room } = await HostService.reenterRoom({
         hostId: socket.data.userId,

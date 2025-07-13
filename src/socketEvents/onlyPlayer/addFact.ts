@@ -5,14 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerAddFact = (socket: SocketType) => {
   socket.on("addFact", async (eventInputData, cb) => {
-    sentryLog({
-      actionName: "addFact",
-      severity: "info",
-      eventFrom: "client",
-      message: "Игрок добавляет факт",
-      userId: socket.data.userId,
-      input: eventInputData,
-    });
     try {
       await PlayerService.addFact({
         factText: eventInputData.text,

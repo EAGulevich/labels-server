@@ -25,14 +25,14 @@ type ErrorResponse = {
 
 type Response<T = undefined> = SuccessResponse<T> | ErrorResponse;
 
-type EventData<T = undefined> = T extends undefined
+type EventData<T = undefined> = { logMsg: string } & (T extends undefined
   ? {
       room: RoomClient;
     }
   : {
       room: RoomClient;
       extra: T;
-    };
+    });
 
 export interface ServerToClientEvents {
   hostLeftRoom: (data: EventData) => void;

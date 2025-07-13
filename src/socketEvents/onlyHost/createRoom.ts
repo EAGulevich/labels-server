@@ -5,13 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerCreateRoom = (socket: SocketType) => {
   socket.on("createRoom", async (_, cb) => {
-    sentryLog({
-      actionName: "createRoom",
-      severity: "info",
-      eventFrom: "client",
-      message: "Хост создает комнату",
-      userId: socket.data.userId,
-    });
     try {
       // при создании используем текущий socket.id для хоста
       const hostId = socket.id;

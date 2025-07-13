@@ -20,7 +20,7 @@ import {
 import { fakeId } from "@utils/fakeId";
 import { getRandomElement } from "@utils/getRandomElement";
 import { KnownError } from "@utils/KnownError";
-import { sentryLog, sentryLogError } from "@utils/logger";
+import { sentryLogError } from "@utils/logger";
 import { shuffleArray } from "@utils/shuffleArray";
 import {
   BelongsToGetAssociationMixin,
@@ -458,70 +458,40 @@ RoomModel.init(
           const roomWithFullInfo = await room.getFullInfo();
 
           io.sockets.in(room.code).emit("hostLeftRoom", {
+            logMsg: "Хост потерял соединение",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "hostLeftRoom",
-            message: "Хост потерял соединение",
-            outputRoom: roomWithFullInfo,
           });
         }
 
         if (isHostReturned) {
           const roomWithFullInfo = await room.getFullInfo();
           io.sockets.in(room.code).emit("hostReturnedToRoom", {
+            logMsg: "Хост восстановил соединение",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            message: "Хост восстановил соединение",
-            outputRoom: roomWithFullInfo,
-            actionName: "hostReturnedToRoom",
           });
         }
 
         if (isStartNewVoting) {
           const roomWithFullInfo = await room.getFullInfo();
           io.sockets.in(room.code).emit("voting", {
+            logMsg: "Назначен новый факт для голосования",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            outputRoom: roomWithFullInfo,
-            actionName: "voting",
-            message: "Назначен новый факт для голосования",
           });
         }
 
         if (isGameOver) {
           const roomWithFullInfo = await room.getFullInfo();
           io.sockets.in(room.code).emit("results", {
+            logMsg: "Отданы результаты игры",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "results",
-            outputRoom: roomWithFullInfo,
-            message: "Отданы результаты игры",
           });
         }
 
         if (isGameStarted) {
           const roomWithFullInfo = await room.getFullInfo();
           io.sockets.in(room.code).emit("gameStarted", {
+            logMsg: "Игра началась",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            outputRoom: roomWithFullInfo,
-            actionName: "gameStarted",
-            message: "Игра началась",
           });
 
           setTimeout(async () => {
@@ -582,14 +552,8 @@ RoomModel.init(
 
           const roomWithFullInfo = await room.getFullInfo();
           io.sockets.in(room.code).emit("newRoundStarted", {
+            logMsg: "Начат новый раунд",
             room: roomWithFullInfo,
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            message: "Начат новый раунд",
-            actionName: "newRoundStarted",
-            outputRoom: roomWithFullInfo,
           });
         }
       },

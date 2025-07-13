@@ -4,6 +4,7 @@ import "./instrument";
 import { app, io, server } from "@app";
 import { setupAssociations } from "@models/associations";
 import { GameService } from "@services/game.service";
+import { registerLogging } from "@socketEvents/logging/addLogging";
 import {
   registerCreateRoom,
   registerFindRoomByHostId,
@@ -48,6 +49,8 @@ io.on("connection", (socket) => {
     message: "Пользователь подключился",
     userId: socket.data.userId,
   });
+
+  registerLogging(socket);
 
   // host
   registerCreateRoom(socket);

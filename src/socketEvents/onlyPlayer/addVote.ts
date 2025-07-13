@@ -5,14 +5,6 @@ import { prettyErr } from "@utils/prettyErr";
 
 export const registerAddVote = (socket: SocketType) => {
   socket.on("addVote", async ({ candidateId, factId }, cb) => {
-    sentryLog({
-      actionName: "addVote",
-      severity: "info",
-      eventFrom: "client",
-      message: "Игрок голосует",
-      userId: socket.data.userId,
-      input: { candidateId, factId },
-    });
     try {
       const { room } = await PlayerService.addVote({
         voterId: socket.data.userId,

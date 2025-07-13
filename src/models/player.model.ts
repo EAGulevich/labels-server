@@ -12,7 +12,6 @@ import {
   FACT_STATUSES,
 } from "@shared/types";
 import { KnownError } from "@utils/KnownError";
-import { sentryLog } from "@utils/logger";
 import {
   BelongsToGetAssociationMixin,
   CreationOptional,
@@ -161,14 +160,7 @@ PlayerModel.init(
         io.sockets.in(room.code).emit("joinedPlayer", {
           room,
           extra: { joinedPlayer },
-        });
-
-        sentryLog({
-          severity: "info",
-          eventFrom: "server",
-          outputRoom: room,
-          actionName: "joinedPlayer",
-          message: `Игрок [${joinedPlayer.name}] присоединился к комнате`,
+          logMsg: `Игрок [${joinedPlayer.name}] присоединился к комнате`,
         });
       },
       afterDestroy: async (player) => {
@@ -179,13 +171,7 @@ PlayerModel.init(
         io.sockets.in(room.code).emit("disconnectedPlayer", {
           room,
           extra: { disconnectedPlayerName },
-        });
-        sentryLog({
-          severity: "info",
-          eventFrom: "server",
-          outputRoom: room,
-          message: `Игрок [${disconnectedPlayerName}] вышел из комнаты`,
-          actionName: "disconnectedPlayer",
+          logMsg: `Игрок [${disconnectedPlayerName}] вышел из комнаты`,
         });
       },
       afterUpdate: async (player) => {
@@ -209,16 +195,10 @@ PlayerModel.init(
 
           io.sockets.in(room.code).emit("updateVipPlayer", {
             room,
+            logMsg: `Игрок [${player}] стал VIP`,
             extra: {
               newVipPlayer: mapToPlayerClient(player),
             },
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "updateVipPlayer",
-            message: `Игрок [${player}] стал VIP`,
-            outputRoom: room,
           });
         }
 
@@ -228,15 +208,9 @@ PlayerModel.init(
           const markedInactivePlayer = mapToPlayerClient(player);
 
           io.sockets.in(room.code).emit("playerLostConnection", {
+            logMsg: `Игрок [${markedInactivePlayer.name}] потерял соединение`,
             room,
             extra: { markedInactivePlayer },
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            message: `Игрок [${markedInactivePlayer.name}] потерял соединение`,
-            outputRoom: room,
-            actionName: "playerLostConnection",
           });
         }
 
@@ -246,15 +220,9 @@ PlayerModel.init(
           const reconnectedPlayer = mapToPlayerClient(player);
 
           io.sockets.in(room.code).emit("playerHasReconnected", {
+            logMsg: `Игрок [${reconnectedPlayer.name}] восстановил соединение`,
             room,
             extra: { reconnectedPlayer },
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "playerHasReconnected",
-            message: `Игрок [${reconnectedPlayer.name}] восстановил соединение`,
-            outputRoom: room,
           });
         }
 
@@ -264,15 +232,9 @@ PlayerModel.init(
           const updatedPlayer = mapToPlayerClient(player);
 
           io.sockets.in(room.code).emit("playerChangedAvatar", {
+            logMsg: `Игрок [${updatedPlayer.name}] изменил аватар`,
             room,
             extra: { updatedPlayer },
-          });
-          sentryLog({
-            severity: "info",
-            eventFrom: "server",
-            actionName: "playerChangedAvatar",
-            message: `Игрок [${updatedPlayer.name}] изменил аватар`,
-            outputRoom: room,
           });
         }
       },

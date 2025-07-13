@@ -4,13 +4,6 @@ import { sentryLog } from "@utils/logger";
 
 export const registerFindRoomByHostId = (socket: SocketType) => {
   socket.on("findRoomByHostId", async (_, cb) => {
-    sentryLog({
-      actionName: "findRoomByHostId",
-      severity: "info",
-      eventFrom: "client",
-      message: "Хост узнает о наличии комнаты",
-      userId: socket.data.userId,
-    });
     try {
       const { room } = await HostService.findRoom({
         hostId: socket.data.userId,
