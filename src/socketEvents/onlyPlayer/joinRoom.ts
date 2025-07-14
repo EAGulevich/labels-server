@@ -27,6 +27,7 @@ export const registerJoinRoom = (socket: SocketType) => {
         room,
         extra: {
           userId: joinedPlayer.id,
+          userName: joinedPlayer.name,
         },
       });
       sentryLog({

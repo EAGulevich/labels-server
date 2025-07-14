@@ -81,7 +81,7 @@ export interface ClientToServerEvents {
       roomCode: RoomClient["code"];
       player: Pick<PlayerClient, "name">;
     },
-    cb: (res: Response<{ userId: string }>) => void,
+    cb: (res: Response<{ userId: string; userName: string }>) => void,
   ) => void;
 
   changeAvatar: (
