@@ -275,6 +275,9 @@ export class RoomModel extends Model<
           id: currentVotingFact.id,
           text: currentVotingFact.text,
         },
+        playersWhoVotedIds: votesForCurrentVotingFact.map(
+          (vote) => vote.voterId,
+        ),
         candidates,
         prevSteps,
       },

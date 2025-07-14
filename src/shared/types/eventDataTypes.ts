@@ -36,6 +36,7 @@ export type VotingDataItem = {
     id: number;
     text: string;
   };
+  playersWhoVotedIds: string[];
   candidates: {
     candidate: Pick<PlayerClient, "id" | "name" | "avatar">;
     votesCount: number;
