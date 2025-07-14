@@ -66,6 +66,7 @@ export type RoomClientBase = {
   currentRound: number;
   players: PlayerClient[];
   facts: FactClient[];
+  hostId: string;
 };
 
 export type RoomClient = RoomClientBase &

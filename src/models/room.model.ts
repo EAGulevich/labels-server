@@ -349,13 +349,14 @@ export class RoomModel extends Model<
 
     const commonInfo: Pick<
       RoomClient,
-      "code" | "isActive" | "currentRound" | "facts" | "players"
+      "code" | "isActive" | "currentRound" | "facts" | "players" | "hostId"
     > = {
       code: room.code,
       isActive: room.isActive,
       currentRound: room.currentRound,
       facts: facts,
       players: players.map(mapToPlayerClient),
+      hostId: room.hostId,
     };
 
     if (room.status === ROOM_STATUSES.RESULTS) {
