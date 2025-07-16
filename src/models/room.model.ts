@@ -11,7 +11,6 @@ import {
   ERROR_CODES,
   FACT_STATUSES,
   FactClient,
-  PlayerClient,
   Results,
   ROOM_STATUSES,
   RoomClient,
@@ -225,27 +224,28 @@ export class RoomModel extends Model<
     });
 
     /** Кандидаты - игроки, которых не отгадали в прошлых раундах + в текущем раунде не были выбраны голосованием */
-    const candidates = unguessedPlayersInPrevRounds
-      .filter(
-        (p) =>
-          !currentRoundVotingResults.some(
-            (result) => result.selectedPlayerId === p.id,
-          ),
-      )
-      .sort((a, b) => a.order - b.order)
-      .map(
-        (
-          candidate,
-        ): {
-          candidate: PlayerClient;
-          votesCount: number;
-        } => ({
-          candidate: mapToPlayerClient(candidate),
+    const candidates: VotingDataItem["candidates"] =
+      unguessedPlayersInPrevRounds
+        .filter(
+          (p) =>
+            !currentRoundVotingResults.some(
+              (result) => result.selectedPlayerId === p.id,
+            ),
+        )
+        .sort((a, b) => a.order - b.order)
+        .map((candidate) => ({
+          candidate: {
+            id: candidate.id,
+            name: candidate.name,
+            avatar: {
+              token: candidate.avatarToken,
+              isAutoSelected: candidate.isAvatarAutoSelected,
+            },
+          },
           votesCount: votesForCurrentVotingFact.filter(
             (item) => item.selectedPlayerId === candidate.id,
           ).length,
-        }),
-      );
+        }));
 
     const prevSteps = await Promise.all(
       currentRoundVotingResults.map(async (votingResult) => {
