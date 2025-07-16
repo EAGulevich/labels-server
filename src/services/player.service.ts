@@ -112,7 +112,7 @@ export class PlayerService {
     }
 
     const existingPlayer = await PlayerModel.findOne({
-      where: { id: player.id },
+      where: { id: player.id, roomId: room.id },
     });
 
     if (existingPlayer) {
