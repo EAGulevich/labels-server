@@ -91,9 +91,11 @@ export class PlayerService {
   static async joinRoom({
     roomCode,
     player,
+    socketId,
   }: {
     roomCode: RoomModel["code"];
     player: Pick<PlayerClient, "name" | "id">;
+    socketId: string;
   }): Promise<{
     room: RoomClient;
     joinedPlayer: Pick<PlayerClient, "name" | "id">;
@@ -131,7 +133,7 @@ export class PlayerService {
     }
 
     const { newPlayer } = await this.addPlayerToRoom({
-      id: player.id,
+      id: socketId,
       roomId: room.id,
       playerName: player.name,
       isFake: false,

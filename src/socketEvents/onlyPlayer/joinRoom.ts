@@ -9,6 +9,7 @@ export const registerJoinRoom = (socket: SocketType) => {
     try {
       const { room, joinedPlayer } = await PlayerService.joinRoom({
         roomCode,
+        socketId: socket.id,
         player: {
           name: player.name,
           id: socket.data.userId,
