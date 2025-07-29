@@ -49,6 +49,7 @@ export class RoomModel extends Model<
   declare status: CreationOptional<ROOM_STATUSES>;
   declare isActive: CreationOptional<boolean>;
   declare currentRound: CreationOptional<number>;
+  declare lang: "ru" | "en";
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -419,6 +420,9 @@ RoomModel.init(
       type: DataTypes.NUMBER,
       defaultValue: 0,
     },
+    lang: {
+      type: DataTypes.ENUM("ru", "en"),
+    },
     hostId: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -503,7 +507,7 @@ RoomModel.init(
               const randomFactText = getRandomElement(FAKE_FACTS);
 
               await PlayerService.addFact({
-                factText: randomFactText,
+                factText: randomFactText[room.lang],
                 playerId: fakeId(room.code),
               });
             } catch (err) {

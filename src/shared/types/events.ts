@@ -70,7 +70,7 @@ export interface ClientToServerEvents {
   ) => void;
 
   createRoom: (
-    data: null,
+    data: { lang: "ru" | "en" },
     cb: (res: Response<{ userId: string }>) => void,
   ) => void;
 

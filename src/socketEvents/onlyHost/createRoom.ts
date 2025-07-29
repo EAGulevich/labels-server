@@ -4,12 +4,13 @@ import { sentryLog } from "@utils/logger";
 import { prettyErr } from "@utils/prettyErr";
 
 export const registerCreateRoom = (socket: SocketType) => {
-  socket.on("createRoom", async (_, cb) => {
+  socket.on("createRoom", async ({ lang }, cb) => {
     try {
       // при создании используем текущий socket.id для хоста
       const hostId = socket.id;
       const { room } = await HostService.createRoom({
         hostId,
+        lang,
       });
 
       socket.data.userId = socket.id;

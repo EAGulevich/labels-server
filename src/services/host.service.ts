@@ -17,10 +17,12 @@ export class HostService {
 
   static async createRoom({
     hostId,
+    lang,
   }: {
     hostId: RoomModel["hostId"];
+    lang: "ru" | "en";
   }): Promise<{ room: RoomClient }> {
-    const room = await RoomModel.create({ hostId });
+    const room = await RoomModel.create({ hostId, lang });
 
     return { room: await room.getFullInfo() };
   }
