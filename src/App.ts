@@ -28,6 +28,7 @@ export const io = new Server<
     origin: [
       "https://game-labels-preview.vercel.app",
       "https://game-labels.vercel.app",
+      "https://labels-native.vercel.app",
     ],
     methods: ["GET", "POST"],
   },
