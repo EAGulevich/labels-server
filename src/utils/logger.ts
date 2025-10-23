@@ -32,10 +32,19 @@ type LogDataServer = {
   | { outputRoom?: RoomClient; error: any }
 );
 
+type LogDataAI = {
+  eventFrom: "AI";
+  actionName: "generateFact";
+} & {
+  room: {
+    code: string;
+  };
+};
+
 export type LogDataType = {
   severity: "error" | "info";
   message: string;
-} & (LogDataClient | LogDataServer);
+} & (LogDataClient | LogDataServer | LogDataAI);
 
 export const sentryLog = async (logData: LogDataType) => {
   const { severity, message, eventFrom, actionName } = logData;
@@ -47,7 +56,9 @@ export const sentryLog = async (logData: LogDataType) => {
     extra: {},
   };
 
-  if (eventFrom === "server") {
+  if (eventFrom === "AI") {
+    meta.room_code = logData.room.code || UNKNOWN_ROOM_CODE;
+  } else if (eventFrom === "server") {
     meta.extra = logData.outputRoom || {};
     meta.room_code = logData.outputRoom?.code || UNKNOWN_ROOM_CODE;
   } else if (eventFrom === "client") {

@@ -4,3 +4,4 @@ dist
 /.idea
 todo.md
 database.sqlite
+.env

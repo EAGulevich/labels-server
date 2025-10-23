@@ -1,5 +1,4 @@
 import { io } from "@app";
-import { ADD_FAKE_FACT_TIMEOUT_MS } from "@constants";
 import { FactModel } from "@models/fact.model";
 import { PlayerModel } from "@models/player.model";
 import { VoteModel } from "@models/vote.model";
@@ -17,7 +16,6 @@ import {
   VotingDataItem,
 } from "@shared/types";
 import { fakeId } from "@utils/fakeId";
-import { getRandomElement } from "@utils/getRandomElement";
 import { KnownError } from "@utils/KnownError";
 import { sentryLogError } from "@utils/logger";
 import { shuffleArray } from "@utils/shuffleArray";
@@ -32,7 +30,7 @@ import {
   Model,
 } from "sequelize";
 
-import { FAKE_FACTS } from "../FAKE_FACTS";
+import { generateAIFact } from "../ai/ai";
 import { sequelize } from "./index";
 
 const TABLE_NAME = "rooms";
@@ -502,18 +500,19 @@ RoomModel.init(
             room: roomWithFullInfo,
           });
 
-          setTimeout(async () => {
-            try {
-              const randomFactText = getRandomElement(FAKE_FACTS);
+          try {
+            const randomFactText = await generateAIFact({
+              roomCode: room.code,
+              lang: room.lang,
+            });
 
-              await PlayerService.addFact({
-                factText: randomFactText[room.lang],
-                playerId: fakeId(room.code),
-              });
-            } catch (err) {
-              sentryLogError(err);
-            }
-          }, ADD_FAKE_FACT_TIMEOUT_MS);
+            await PlayerService.addFact({
+              factText: randomFactText,
+              playerId: fakeId(room.code),
+            });
+          } catch (err) {
+            sentryLogError(err);
+          }
         }
 
         if (isNewRoundStarted) {
