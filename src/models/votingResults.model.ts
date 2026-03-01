@@ -59,6 +59,7 @@ VotingResultsModel.init(
         const room = await votingResult.getRoom();
         const notGuessedPlayersInPrevRounds = await PlayerModel.findAll({
           where: {
+            roomId: room.id,
             factStatus: FACT_STATUSES.NOT_GUESSED,
           },
         });
