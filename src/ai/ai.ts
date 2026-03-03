@@ -1,4 +1,4 @@
-import process from "node:process";
+import "dotenv/config";
 
 import {
   FACT_TEXT_MAX_LENGTH,
@@ -10,9 +10,12 @@ import axios from "axios";
 
 import { FAKE_FACTS } from "../FAKE_FACTS";
 
+const EXAMPLE_FACT_RU = `"никогда не пропускает завтрак", "знает все песни Queen", "был в Японии"`;
+const EXAMPLE_FACT_EN = `"never skips breakfast", "knows every Queen song by heart","dreams of visiting Japan"`;
+
 const PROMPT = {
-  ru: `Ты участник игры, где люди делятся фактами о себе. Твоя цель — придумать факт, который сложно угадать, но который является правдоподобным. Пиши как обычный человек, с разговорным стилем, можно с мелкими ошибками в словах или пунктуации, без точки в конце.. Ответ должен быть от ${FACT_TEXT_MIN_LENGTH} до ${FACT_TEXT_MAX_LENGTH} символов. Используй русский язык`,
-  en: `You're participating in a game where people share facts about themselves. Your goal is to come up with a fact that's hard to guess. Write like a normal person, in a conversational style, with minor spelling or punctuation errors, and without a period at the end. The answer must be between ${FACT_TEXT_MIN_LENGTH} and ${FACT_TEXT_MAX_LENGTH} characters.Use English`,
+  ru: `Ты участник игры, где люди делятся фактами о себе. Твоя цель — придумать 1 факт, который сложно угадать, но который является правдоподобным. Пиши как обычный человек, с разговорным стилем, можно с мелкими ошибками в словах или пунктуации, без точки в конце. Ответ должен быть от ${FACT_TEXT_MIN_LENGTH} до ${FACT_TEXT_MAX_LENGTH} символов. Используй русский язык. Вот примеры фактов - ${EXAMPLE_FACT_RU}, но не используй их же в ответе, а придумай что-то другое и не банальное, не повторяйся с ответами, если помнишь, что я тебя об этом уже спрашивала`,
+  en: `You are a participant in a game where people share facts about themselves. Your goal is to come up with 1 fact that is hard to guess, but still plausible. Write like a regular person, in a conversational style — small mistakes in words or punctuation are fine, no period at the end. The response must be between ${FACT_TEXT_MIN_LENGTH} and ${FACT_TEXT_MAX_LENGTH} characters. Use English language. Here are example facts - ${EXAMPLE_FACT_EN}, but do not use those exact ones in your response. Come up with something different and not banal or obvious. Do not repeat answers if you remember that I already asked you about this.`,
 };
 
 const TASK = {
@@ -27,7 +30,6 @@ export const generateAIFact = async ({
   roomCode: string;
   lang: "ru" | "en";
 }) => {
-  console.log(lang);
   try {
     const grokResponse = await axios.post(
       "https://api.x.ai/v1/chat/completions",
@@ -38,8 +40,10 @@ export const generateAIFact = async ({
             content: `${PROMPT[lang]} ${TASK[lang]}`,
           },
         ],
-        temperature: 0.8, // креативность, где 0.1 точный и серьезный ответ, 1 - наиболее креативный и неожиданный
-        max_tokens: 150, // Ограничение длины ответа
+        // креативность, где 0.1 точный и серьезный ответ, 1 - наиболее креативный и неожиданный
+        temperature: 0.8,
+        // Ограничение длины ответа
+        max_tokens: 150,
         model: "grok-4-latest",
         stream: false,
       },
