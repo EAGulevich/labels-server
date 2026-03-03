@@ -13,12 +13,19 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
+  Sequelize,
   UniqueConstraintError,
 } from "sequelize";
 
 import { sequelize } from "./index";
 
 const TABLE_NAME = "votes";
+
+function check(
+  results: unknown[],
+): results is { selectedPlayerId: string; voteCount: number }[] {
+  return Array.isArray(results);
+}
 
 /** Голос игрока в конкретном раунде за конкретный факт и конкретного игрока */
 export class VoteModel extends Model<
@@ -59,6 +66,49 @@ export class VoteModel extends Model<
         });
       }
       throw error;
+    }
+  }
+
+  static async findWinnerOfVotingResult({
+    factId,
+    round,
+    roomId,
+  }: {
+    roomId: RoomModel["id"];
+    round: RoomModel["currentRound"];
+    factId: FactModel["id"];
+  }): Promise<PlayerModel["id"] | null> {
+    const colName: keyof InferAttributes<VoteModel> = "selectedPlayerId";
+    const results = (await VoteModel.findAll({
+      attributes: [
+        "selectedPlayerId",
+        [Sequelize.fn("COUNT", Sequelize.col(colName)), "voteCount"],
+      ],
+      where: {
+        roomId,
+        round,
+        factId,
+      },
+      group: ["selectedPlayerId"],
+      order: [[Sequelize.literal("voteCount"), "DESC"]],
+      raw: true, // returns plain objects
+    })) as unknown[];
+
+    if (check(results)) {
+      // 2. Handle empty table
+      if (results.length === 0) return null;
+
+      // 3. Check for tie at the top
+      const maxCount = results[0].voteCount;
+      const playersWithMaxCount = results.filter(
+        (r) => r.voteCount === maxCount,
+      );
+
+      return playersWithMaxCount.length === 1
+        ? playersWithMaxCount[0].selectedPlayerId
+        : null;
+    } else {
+      throw new Error();
     }
   }
 }

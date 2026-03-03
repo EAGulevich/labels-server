@@ -9,7 +9,7 @@ import { PlayerService } from "@services/player.service";
 import { ERROR_CODES, ROOM_STATUSES } from "@shared/types";
 import { KnownError } from "@utils/KnownError";
 import { shuffleArray } from "@utils/shuffleArray";
-import maxBy from "lodash.maxby";
+import { Op, Sequelize } from "sequelize";
 
 export class GameService {
   static async disconnect({
@@ -75,36 +75,59 @@ export class GameService {
         enumCode: ERROR_CODES.ROOM_NOT_FOUND,
       }),
     });
+    try {
+      // факт не был отгадан в каком-либо из предыдущих раундов
+      const noVotedInCurrentRound = await FactModel.findAll({
+        include: [
+          {
+            model: VotingResultsModel,
+            as: "votingResults",
+            required: false,
+            where: {
+              round: room.currentRound,
+              roomId: room.id,
+            },
+            attributes: [],
+          },
+        ],
+        where: {
+          roomId: room.id,
+          [Op.and]: {
+            "$votingResults.id$": null,
+            [Op.and]: Sequelize.where(
+              Sequelize.col("authorId"),
+              Op.ne,
+              Sequelize.col("FactModel.selectedPlayerId"),
+            ),
+          },
+        },
+        logging: console.log,
+      });
+      console.log({
+        noVotedInCurrentRound: noVotedInCurrentRound.map((i) => ({
+          text: i.text,
+          factId: i.id,
+        })),
+      });
+      throw new Error("my err");
 
-    const allFacts = await room.getFacts();
-    const players = await room.getPlayers();
+      const players = await room.getPlayers();
 
-    await Promise.all(
-      shuffleArray(players).map((p, index) => {
-        return p.update({ order: index + 1 });
-      }),
-    );
+      await Promise.all(
+        shuffleArray(players).map((p, index) => {
+          return p.update({ order: index + 1 });
+        }),
+      );
 
-    const alreadyVotedFactsInCurrentRound = await VotingResultsModel.findAll({
-      where: { roomId: room.id, round: room.currentRound },
-    });
+      const someUnvotedFactIdInCurrentRound =
+        shuffleArray(noVotedInCurrentRound)[0]?.id || null;
 
-    const notVotedFactsYet = allFacts.filter(
-      (f) =>
-        // факт не был отгадан в каком-либо из предыдущих раундов
-        f.authorId !== f.selectedPlayerId &&
-        // за факт еще не голосовали в текущем раунде
-        !alreadyVotedFactsInCurrentRound.find(
-          (votingResult) => votingResult.factId === f.id,
-        ),
-    );
-
-    const someUnvotedFactIdInCurrentRound =
-      shuffleArray(notVotedFactsYet)[0]?.id || null;
-
-    await room.update({
-      currentVotingFactId: someUnvotedFactIdInCurrentRound,
-    });
+      await room.update({
+        currentVotingFactId: someUnvotedFactIdInCurrentRound,
+      });
+    } catch (error) {
+      console.log("ERROR=============", { error });
+    }
   }
 
   static async startNewRound({
@@ -140,47 +163,16 @@ export class GameService {
 
     const room = await fact.getRoom();
 
-    const allVotesForFact = await VoteModel.findAll({
-      where: {
-        roomId: room.id,
-        round: room.currentRound,
-        factId: fact.id,
-      },
+    const selectedPlayerId = await VoteModel.findWinnerOfVotingResult({
+      factId,
+      roomId,
+      round: room.currentRound,
     });
-
-    const votesMap = allVotesForFact.reduce<{
-      // id игрока : кол-во голосов за него
-      [playerId: string]: number;
-    }>((acc, vote) => {
-      if (!acc[vote.selectedPlayerId]) {
-        acc[vote.selectedPlayerId] = 0;
-      }
-      acc[vote.selectedPlayerId]++;
-      return acc;
-    }, {});
-
-    const playerIdWithMaxVotes = maxBy(
-      Object.entries(votesMap).map(([playerId, votesCount]) => ({
-        playerId,
-        votesCount,
-      })),
-      (val) => val.votesCount,
-    );
-
-    const isOnlyOnePlayerWithMaxVotesCount =
-      Object.values(votesMap).filter(
-        (val) => val === playerIdWithMaxVotes?.votesCount,
-      ).length === 1;
-
-    const selectedPlayerId =
-      playerIdWithMaxVotes && isOnlyOnePlayerWithMaxVotesCount
-        ? playerIdWithMaxVotes.playerId
-        : null;
 
     await VotingResultsModel.create({
       factId,
       roomId,
-      selectedPlayerId,
+      selectedPlayerId: selectedPlayerId,
       round: room.currentRound,
     });
   }

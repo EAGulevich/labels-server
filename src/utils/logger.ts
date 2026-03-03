@@ -78,10 +78,14 @@ export const sentryLog = async (logData: LogDataType) => {
     meta.extra = hostRoom || playerRoom || {};
   }
 
+  if (severity === "error") {
+    console.log(message, meta);
+  }
   Sentry.logger[severity](message, flattenObject(meta));
 };
 
 export const sentryLogError = (err: unknown) => {
+  console.log({ err });
   sentryLog({
     severity: "error",
     eventFrom: "server",

@@ -28,9 +28,27 @@ const PORT = process.env.PORT || 5001;
 
 (async () => {
   setupAssociations();
-  await sequelize.sync({ force: true }).then(() => {
+  await sequelize.sync({ force: false }).then(() => {
     console.log("Database synced");
   });
+
+  //
+  // const a = await VoteModel.findAll({
+  //   attributes: [
+  //     "selectedPlayerId",
+  //     [Sequelize.fn("COUNT", Sequelize.col("selectedPlayerId")), "voteCount"],
+  //   ],
+  //   where: {
+  //     roomId: 1,
+  //     round: 1,
+  //     factId: 1,
+  //   },
+  //   group: ["selectedPlayerId"],
+  //   order: [[Sequelize.literal("selectedPlayerId"), "DESC"]],
+  //   raw: true, // returns plain objects
+  // });
+  //
+  // console.log({ a });
 })();
 
 app.use(cors());

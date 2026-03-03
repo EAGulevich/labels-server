@@ -45,6 +45,11 @@ export function setupAssociations() {
     as: "selectedPlayer",
   });
 
+  FactModel.hasMany(VotingResultsModel, {
+    foreignKey: "factId",
+    as: "votingResults",
+  });
+
   // Vote
 
   VoteModel.belongsTo(RoomModel, {
