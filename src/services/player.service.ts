@@ -167,7 +167,7 @@ export class PlayerService {
 
     const players = await room.getPlayers();
 
-    if (players.length === MAX_PLAYERS) {
+    if (players.length === MAX_PLAYERS && !isFake) {
       throw new KnownError({ enumCode: ERROR_CODES.ROOM_AT_MAX_CAPACITY });
     } else if (room.status !== ROOM_STATUSES.LOBBY) {
       throw new KnownError({ enumCode: ERROR_CODES.GAME_ALREADY_STARTED });
